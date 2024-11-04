@@ -12,8 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('chat_groups', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->string('name');
+            $table->string('avatar')->nullable();
+            $table->text('description')->nullable();
+            $table->uuid('creator_id');
             $table->timestamps();
+
+            $table->foreign('creator_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('restrict');
         });
     }
 

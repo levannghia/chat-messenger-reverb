@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('chat_message_colors', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->uuid('from_id');
+            $table->uuidMorphs('to');
+            $table->string('message_color');
             $table->timestamps();
+
+            $table->foreign('from_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('restrict');
         });
     }
 

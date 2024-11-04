@@ -12,8 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('chat_message_contacts', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->uuid('user_id');
+            $table->uuid('contact_id');
+            $table->boolean('is_contact_saved')->default(0);
+            $table->boolean('is_contact_blocked')->default(0);
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('restrict');
         });
     }
 
