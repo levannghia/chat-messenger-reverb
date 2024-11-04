@@ -8,8 +8,8 @@ export default function GuestLayout({ children }) {
                 <Link href="/" className="mx-auto w-20">
                     <ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
                 </Link>
+                {children}
             </div>
-            {children}
         </div>
     );
 }
