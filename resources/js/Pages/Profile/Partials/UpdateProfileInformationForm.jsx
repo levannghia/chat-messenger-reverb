@@ -4,19 +4,37 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
+import { useRef } from 'react';
+import { BsCamera } from 'react-icons/bs';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
     status,
     className = '',
 }) {
-    const user = usePage().props.auth.user;
+    const user = usePage().props.auth;
+    const avatarRef = useRef(null);
 
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
+            _method: "PATCH",
             name: user.name,
             email: user.email,
+            avatar: null,
         });
+
+    const changeAvatar = (e) => {
+        const files = e.target.files;
+        if(files && files.length > 0) {
+            setData('avatar', files[0]);
+            const imgUrl = window.URL.createObjectURL(files[0]);
+            avatarRef.current?.setAttribute('src', imgUrl);
+
+            return () => {
+                window.URL.revokeObjectURL(imgUrl);
+            }
+        }
+    }
 
     const submit = (e) => {
         e.preventDefault();
@@ -37,6 +55,28 @@ export default function UpdateProfileInformation({
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
+                <div className="picture relative">
+                    <img
+                        src={user.avatar}
+                        alt={user.name}
+                        className="mx-auto h-20 w-20 rounded-full border border-secondary"
+                        ref={avatarRef}
+                    />
+
+                    <label
+                        htmlFor="avatar"
+                        className="btn btn-primary absolute left-1/2 top-6 flex translate-x-5 cursor-pointer items-center justify-center rounded-full px-2"
+                        tabIndex={0}
+                    >
+                        <BsCamera />
+                        <input
+                            type="file"
+                            onChange={changeAvatar}
+                            id="avatar"
+                            className="hidden"
+                        />
+                    </label>
+                </div>
                 <div>
                     <InputLabel htmlFor="name" value="Name" />
 
