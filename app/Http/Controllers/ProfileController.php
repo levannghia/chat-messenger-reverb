@@ -30,6 +30,7 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $attributes = $request->validated();
+       
         if($request->hasFile('avatar')) {
             $attributes['avatar'] = upload_file($request->file('avatar'), 'user');
             remove_file($request->user()->avatar);
@@ -45,7 +46,7 @@ class ProfileController extends Controller
 
         $request->user()->update($attributes);
 
-        return Redirect::route('profile.edit');
+        return back();
     }
 
     /**

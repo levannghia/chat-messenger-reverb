@@ -15,7 +15,7 @@ export default function UpdateProfileInformation({
     const user = usePage().props.auth;
     const avatarRef = useRef(null);
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
+    const { data, setData, post, errors, processing, recentlySuccessful } =
         useForm({
             _method: "PATCH",
             name: user.name,
@@ -39,7 +39,7 @@ export default function UpdateProfileInformation({
     const submit = (e) => {
         e.preventDefault();
 
-        patch(route('profile.update'));
+        post(route('profile.update'));
     };
 
     return (
