@@ -45,10 +45,14 @@ const Content = ({
 
     let alignmentClasses = 'origin-top';
 
-    if (align === 'left') {
-        alignmentClasses = 'ltr:origin-top-left rtl:origin-top-right start-0';
-    } else if (align === 'right') {
-        alignmentClasses = 'ltr:origin-top-right rtl:origin-top-left end-0';
+    if (align === "left") {
+        alignmentClasses = "origin-top-left end-0 sm:start-0 mt-2";
+    } else if (align === "right") {
+        alignmentClasses = "origin-top-right end-0 mt-2";
+    } else if (align === "top-left") {
+        alignmentClasses = "origin-bottom-left bottom-0 end-0 sm:start-0 mb-2";
+    } else if (align === "top-right") {
+        alignmentClasses = "origin-bottom-right bottom-0 end-0 mb-2";
     }
 
     let widthClasses = '';
@@ -69,12 +73,12 @@ const Content = ({
                 leaveTo="opacity-0 scale-95"
             >
                 <div
-                    className={`absolute z-50 mt-2 rounded-md shadow-lg ${alignmentClasses} ${widthClasses}`}
+                    className={`absolute z-50 ${alignmentClasses} ${widthClasses}`}
                     onClick={() => setOpen(false)}
                 >
                     <div
                         className={
-                            `rounded-md ring-1 ring-black ring-opacity-5 ` +
+                            `rounded-lg bg-background !p-2 shadow-md ring-1 ring-black ring-opacity-5 dark:ring-white dark:ring-opacity-5 ` +
                             contentClasses
                         }
                     >
@@ -100,8 +104,27 @@ const DropdownLink = ({ className = '', children, ...props }) => {
     );
 };
 
+const DropdownButton = ({
+    className = "",
+    children,
+    ...props
+}) => {
+    return (
+        <button
+            {...props}
+            className={
+                "block w-full rounded-md px-4 py-2 text-start text-sm leading-5 text-foreground transition duration-150 ease-in-out hover:bg-secondary focus:bg-secondary focus:outline-none " +
+                className
+            }
+        >
+            {children}
+        </button>
+    );
+};
+
 Dropdown.Trigger = Trigger;
 Dropdown.Content = Content;
 Dropdown.Link = DropdownLink;
+Dropdown.Button = DropdownButton;
 
 export default Dropdown;
