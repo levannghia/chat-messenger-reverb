@@ -1,13 +1,18 @@
+import { useModalContext } from '@/Contexts/modal-context';
 import clsx from 'clsx';
 import React, { useState } from 'react'
 import { FaUsers } from "react-icons/fa";
 
 export default function Sidebar() {
   const [search, setSearch] = useState("");
+  const {openModal} = useModalContext();
   const addNewGroup = () => {
-
+    openModal({
+      view: 'PREFERENCES',
+      size: 'lg'
+    })
   }
-  
+
   return (
     <div
       className={clsx(
