@@ -12,4 +12,8 @@ class ChatMessage extends Model
 
     protected $guarded = ['id'];
     protected $hidden = ['deleted_in_id', 'seen_in_id'];
+
+    protected static function boot() {
+        parent::boot();
+    }
 }

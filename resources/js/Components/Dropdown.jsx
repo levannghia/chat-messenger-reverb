@@ -38,7 +38,7 @@ const Trigger = ({ children }) => {
 const Content = ({
     align = 'right',
     width = '48',
-    contentClasses = 'py-1 bg-white',
+    contentClasses = 'py-1 bg-background',
     children,
 }) => {
     const { open, setOpen } = useContext(DropDownContext);
@@ -78,7 +78,7 @@ const Content = ({
                 >
                     <div
                         className={
-                            `rounded-lg bg-background dark:bg-secondary !p-2 shadow-md ring-1 ring-black ring-opacity-5 dark:ring-white dark:ring-opacity-5 ` +
+                            `rounded-lg bg-background !p-2 shadow-md ring-1 ring-black ring-opacity-5 dark:ring-white dark:ring-opacity-5 ` +
                             contentClasses
                         }
                     >

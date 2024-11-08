@@ -5,10 +5,17 @@ import React from 'react'
 import { BsArchive, BsBoxArrowRight, BsChat, BsGear, BsPeople, BsPersonCircle } from 'react-icons/bs'
 import Dropdown from "@/components/Dropdown";
 import { useAppStore } from '@/store/appStore'
+import { useModalContext } from '@/Contexts/modal-context'
 
 function SidebarMini() {
   const { auth } = useAppStore();
-  const openPreferences = () => { }
+  const {openModal} = useModalContext();
+  const openPreferences = () => {
+    openModal({
+      view: 'PREFERENCES',
+      size: 'lg'
+    })
+  }
 
   return (
     <div className='order-2 mt-auto flex flex-row justify-between bg-background sm:order-1 sm:mt-0 sm:flex-col sm:items-center sm:justify-center sm:p-2'>

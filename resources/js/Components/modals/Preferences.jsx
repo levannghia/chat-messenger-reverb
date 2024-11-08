@@ -9,6 +9,7 @@ import clsx from "clsx";
 // import { updateUser } from "@/api/users";
 import { useAppStore } from "@/store/appStore";
 import { useThemeStore } from "@/store/useThemeStore";
+import { updateUser } from "@/Api/users";
 
 export default function Preferences() {
   const { auth, setAuth } = useAppStore();
@@ -16,9 +17,10 @@ export default function Preferences() {
   const { closeModal } = useModalContext();
   
   const toggleActiveStatus = (status) => {
-    // updateUser(auth, { active_status: status }).then(() => {
-    //   setAuth({ ...auth, active_status: status });
-    // });
+    updateUser(auth, { active_status: status }).then(() => {
+      setAuth({ ...auth, active_status: status });
+    });
+    setAuth({...auth, active_status: status});
   };
 
   return (
