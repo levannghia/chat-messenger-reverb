@@ -2,6 +2,8 @@ import { useModalContext } from '@/Contexts/modal-context';
 import clsx from 'clsx';
 import React, { useState } from 'react'
 import { FaUsers } from "react-icons/fa";
+import ChatListSearch from './ChatListSearch';
+import ChatList from './ChatList';
 
 export default function Sidebar() {
   const [search, setSearch] = useState("");
@@ -30,17 +32,22 @@ export default function Sidebar() {
         </button>
       </div>
 
-    
+      {/* Searching */}
+      <ChatListSearch search={search} setSearch={setSearch}/>
+
+      {/* Chat list */}
+      <ChatList search={search} href={'chats.show'}/>
+
       {/* {chats.length === 0 && search.length > 0 && ( */}
-        <p className="flex h-full flex-1 items-center justify-center">
+        {/* <p className="flex h-full flex-1 items-center justify-center">
           User not found
-        </p>
+        </p> */}
       {/* )} */}
 
       {/* {chats.length === 0 && search.length === 0 && ( */}
-        <p className="flex h-full flex-1 items-center justify-center">
+        {/* <p className="flex h-full flex-1 items-center justify-center">
           No chat yet
-        </p>
+        </p> */}
       {/* )} */}
     </div>
   )

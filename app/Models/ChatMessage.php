@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,10 +11,36 @@ class ChatMessage extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $guarded = ['id'];
+    protected $guarded = ['id']; //không được gán
     protected $hidden = ['deleted_in_id', 'seen_in_id'];
 
-    protected static function boot() {
+    public const CHAT_TYPE = 'chats';
+    public const CHAT_GROUP_TYPE = 'group_chats';
+
+    public function from () {
+        return $this->belongsTo(User::class, 'from_id');
+    }
+
+    public function to() {
+        return $this->morphTo();
+    }
+
+    protected static function boot()
+    {
         parent::boot();
+
+        static::addGlobalScope('default_sort', function(Builder $builder) {
+            $builder->orderBy('sort_id');
+        });
+
+        static::creating(function ($model) {
+            $model->sort_id = static::max('sort_id') + 1;
+            $model->seen_in_id = json_encode([
+                [
+                    'id' => auth()->id(),
+                    'seen_at' => now(),
+                ]
+            ]);
+        });
     }
 }
