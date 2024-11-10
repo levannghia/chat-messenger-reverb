@@ -1,4 +1,6 @@
+import { usePage } from "@inertiajs/react";
 import moment from "moment";
+import React, { useEffect, useState } from "react";
 import { create } from "zustand";
 
 export const useChatStore = create((set) => ({
@@ -31,3 +33,17 @@ export const useChatStore = create((set) => ({
         }
     }
 }))
+
+export const ChatProvider = ({children}) => {
+    const props = usePage().props;
+    const [isFirstLoading, setIsFirstLoading] = useState(true);
+    const { chats, paginate, setChats, setPaginate, refetchChats } = useChatStore();
+
+    useEffect(() => {
+        setIsFirstLoading(false);
+        setChats(props.chats.data);
+        setPaginate(props.chats);
+    }, [])
+
+    return <>{children}</>
+}

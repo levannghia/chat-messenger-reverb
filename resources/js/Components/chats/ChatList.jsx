@@ -3,14 +3,16 @@ import clsx from 'clsx';
 import React from 'react'
 import BadgeOnline from './BadgeOnline';
 import { relativeTime } from '@/utils';
+import { useChatStore } from '@/store/useChatStore';
+import { useChatContext } from '@/Contexts/chat-context';
 
 export default function ChatList({ search, href, className }) {
-    const { chats } = usePage().props;
+    const { chats } = useChatStore();
     console.log(chats);
-
+    
     return (
         <div className='relative max-h-[calc(100vh_-_158px)] flex-1 overflow-y-auto px-2 sm:max-h-max sm: pb-2'>
-            {chats.data.sort((a, b) => {
+            {chats.sort((a, b) => {
                 if (search.length === 0) {
                     return b.created_at.localeCompare(a.created_at);
                 }
