@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatsController;
+use App\Http\Controllers\CheckTotalCompany;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->middleware('guest');
-
+Route::get('/total-company', [CheckTotalCompany::class, 'index']);
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth'])->name('dashboard');

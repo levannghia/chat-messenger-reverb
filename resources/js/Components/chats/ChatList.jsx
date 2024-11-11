@@ -10,6 +10,8 @@ export default function ChatList({ search, href, className }) {
     const { chats } = useChatStore();
     console.log(chats);
     
+    if(chats.length === 0) return;
+
     return (
         <div className='relative max-h-[calc(100vh_-_158px)] flex-1 overflow-y-auto px-2 sm:max-h-max sm: pb-2'>
             {chats.sort((a, b) => {

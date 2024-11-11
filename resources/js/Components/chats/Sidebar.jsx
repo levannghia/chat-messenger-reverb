@@ -4,8 +4,10 @@ import React, { useState } from 'react'
 import { FaUsers } from "react-icons/fa";
 import ChatListSearch from './ChatListSearch';
 import ChatList from './ChatList';
+import { useChatStore } from '@/store/useChatStore';
 
 export default function Sidebar() {
+  const { chats } = useChatStore();
   const [search, setSearch] = useState("");
   const {openModal} = useModalContext();
   const addNewGroup = () => {
@@ -38,17 +40,17 @@ export default function Sidebar() {
       {/* Chat list */}
       <ChatList search={search} href={'chats.show'}/>
 
-      {/* {chats.length === 0 && search.length > 0 && ( */}
-        {/* <p className="flex h-full flex-1 items-center justify-center">
+      {chats.length === 0 && search.length > 0 && (
+        <p className="flex h-full flex-1 items-center justify-center">
           User not found
-        </p> */}
-      {/* )} */}
+        </p>
+      )}
 
-      {/* {chats.length === 0 && search.length === 0 && ( */}
-        {/* <p className="flex h-full flex-1 items-center justify-center">
+      {chats.length === 0 && search.length === 0 && (
+        <p className="flex h-full flex-1 items-center justify-center">
           No chat yet
-        </p> */}
-      {/* )} */}
+        </p>
+      )}
     </div>
   )
 }
