@@ -5,6 +5,7 @@ import BadgeOnline from './BadgeOnline';
 import { relativeTime } from '@/utils';
 import { useChatStore } from '@/store/useChatStore';
 import { useChatContext } from '@/Contexts/chat-context';
+import BadgeNotification from './BadgeNotification';
 
 export default function ChatList({ search, href, className }) {
     const { chats } = useChatStore();
@@ -72,6 +73,7 @@ export default function ChatList({ search, href, className }) {
                                     </div>
                                 </>
                             )}
+                            {!chat.is_read && <BadgeNotification/>}
                         </Link>
                     </div>
                 ))}
