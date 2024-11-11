@@ -1,15 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import { useDebounce } from '@/hooks/use-debounce';
 import { BiSearch } from "react-icons/bi";
+import { useChatStore } from '@/store/useChatStore';
+import { useShallow } from 'zustand/react/shallow';
+import { fetchChats } from '@/Api/chats';
 
 export default function ChatListSearch({ search, setSearch }) {
+    const { setChats, setPaginate } = useChatStore(useShallow((state) => ({
+        setChats: state.setChats,
+        setPaginate: state.setPaginate,
+    })))
+
     const [isFirstLoading, setIsFirstLoading] = useState(true);
     const [debounceSearch] = useDebounce(search, 300);
 
     useEffect(() => {
         setIsFirstLoading(false);
         if (!isFirstLoading) {
-            console.log(debounceSearch);
+            fetchChats(debounceSearch).then((response) => {
+                setChats(response.data.data.chats);
+                setPaginate(response.data.data)
+            })
             
         }
     }, [debounceSearch])
