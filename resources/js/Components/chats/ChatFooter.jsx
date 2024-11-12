@@ -5,7 +5,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import { BiSend } from 'react-icons/bi';
 import { BsEmojiAngry, BsEmojiSmile, BsPlusLg } from 'react-icons/bs'
 
-export default function ChatFooter() {
+export default function ChatFooter({
+  scrollToBottom,
+  attachments,
+  closeOnPreview,
+  onSelectOrPreviewFiles,
+}) {
   const {theme, auth} = useAppStore();
   const [message, setMessage] = useState("");
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
@@ -30,6 +35,32 @@ export default function ChatFooter() {
     }
   }
 
+  const handleOnKeyDown = (e) => {
+    const onPressBackspace = e.key === 'Backspace';
+    const onPressInter = e.key === 'Enter';
+
+    if(onPressBackspace && !e.shiftKey) {
+      e.preventDefault();
+    }
+
+    if(onPressBackspace) {
+      const target = e.target;
+      const lines = target.value.split("\n");
+      console.log(lines);
+      
+      if(target.offsetHeight > 48) {
+        if(lines[lines.length - 1] === "") {
+          setTextareaHeight((prev) => prev - 24);
+        }
+      }
+
+    }
+  }
+
+  const onSelectFile = (e) => {
+    onSelectOrPreviewFiles(e.target.files);
+  }
+
   const toggleEmoji = () => {
     setIsOpenEmoji(!isOpenEmoji);
   };
@@ -45,7 +76,7 @@ export default function ChatFooter() {
         className='mt-1 cursor-pointer rounded-full p-2 text-primary transition-all hover:bg-secondary focus:bg-secondary'
       >
         <BsPlusLg className='h-6 w-6' />
-        <input type="file" id="file" className='hidden' multiple />
+        <input type="file" id="file" className='hidden' multiple onChange={onSelectFile}/>
       </label>
       <div className='relative flex flex-1 items-end'>
         <button
@@ -71,6 +102,7 @@ export default function ChatFooter() {
           style={{height: `${textareaHeight}px`,}}
           value={message}
           ref={textareaRef}
+          onKeyDown={handleOnKeyDown}
           onChange={handleOnChange}
         />
       </div>

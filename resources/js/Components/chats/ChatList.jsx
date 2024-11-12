@@ -9,7 +9,6 @@ import BadgeNotification from './BadgeNotification';
 
 export default function ChatList({ search, href, className }) {
     const { chats } = useChatStore();
-    console.log(chats);
     
     if(chats.length === 0) return;
 
