@@ -1,7 +1,90 @@
-import React from 'react'
+import { useAppStore } from '@/store/appStore';
+import clsx from 'clsx'
+import EmojiPicker from 'emoji-picker-react';
+import React, { useEffect, useRef, useState } from 'react'
+import { BiSend } from 'react-icons/bi';
+import { BsEmojiAngry, BsEmojiSmile, BsPlusLg } from 'react-icons/bs'
 
 export default function ChatFooter() {
+  const {theme, auth} = useAppStore();
+  const [message, setMessage] = useState("");
+  const [isOpenEmoji, setIsOpenEmoji] = useState(false);
+  const [textareaHeight, setTextareaHeight] = useState(48);
+  const [isTyping, setIsTyping] = useState(false);
+  const [processing, setProcessing] = useState(false);
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    textareaRef.current.focus();
+  }, [])
+
+  const handleOnChange = (e) => {
+    setMessage(e.target.value);
+    if(textareaRef.current) {
+      const {scrollHeight, clientHeight} = textareaRef.current;
+      // console.log(scrollHeight, clientHeight);
+      if(scrollHeight !== clientHeight) {
+        setTextareaHeight(clientHeight + 4);
+      }
+      
+    }
+  }
+
+  const toggleEmoji = () => {
+    setIsOpenEmoji(!isOpenEmoji);
+  };
+
+  const handleOnEmojiClick = (emoji) => {
+    setMessage((preMsg) => preMsg + emoji)
+  };
   return (
-    <div>ChatFooter</div>
+    <form
+      className='flex items-end gap-2 bg-background p-2 text-foreground'
+    >
+      <label htmlFor="file"
+        className='mt-1 cursor-pointer rounded-full p-2 text-primary transition-all hover:bg-secondary focus:bg-secondary'
+      >
+        <BsPlusLg className='h-6 w-6' />
+        <input type="file" id="file" className='hidden' multiple />
+      </label>
+      <div className='relative flex flex-1 items-end'>
+        <button
+          type='button'
+          className='absolute right-2 mb-3 text-primary'
+          onClick={toggleEmoji}
+        >
+          <BsEmojiSmile className='h-6 w-6' />
+        </button>
+        <div
+          className={clsx('absolute bottom-14 right-0 z-10', isOpenEmoji ? 'block' : 'hidden')}
+        >
+          <EmojiPicker
+            theme={theme === 'system' ? 'auto' : theme}
+            skinTonesDisabled={true}
+            height={400}
+            onEmojiClick={({emoji}) => handleOnEmojiClick(emoji)}
+          />
+        </div>
+        <textarea
+          paceholder="Aa"
+          className="max-h-[7.5rem] w-full resize-none rounded-xl border border-secondary bg-secondary pr-10 text-foreground focus:border-transparent focus:ring-transparent"
+          style={{height: `${textareaHeight}px`,}}
+          value={message}
+          ref={textareaRef}
+          onChange={handleOnChange}
+        />
+      </div>
+      <button
+        className={clsx(
+          "mb-1 flex rounded-full p-2 text-primary transition-all disabled:cursor-not-allowed",
+          message.trim().length === 0 &&
+            "hover:bg-secondary focus:bg-secondary",
+          message.trim().length > 0 && !processing && "bg-primary !text-white",
+        )}
+        disabled={processing}
+      >
+        <BiSend className="h-6 w-6" />
+      </button>
+    </form>
   )
 }

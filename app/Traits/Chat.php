@@ -27,4 +27,8 @@ trait Chat
 
         return $chats;
     }
+
+    public function messages() {
+        
+    }
 }

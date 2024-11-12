@@ -43,7 +43,8 @@ class ChatsController extends Controller
             $user->chat_type = ChatMessage::CHAT_TYPE;
             return Inertia::render('Chats/Show', [
                 'chats' => $chats, 
-                'user' => $user
+                'user' => $user,
+                'messages' => []
             ]);
 
         } catch (\Exception $e) {

@@ -4,9 +4,12 @@ import BadgeOnline from './BadgeOnline'
 import { Link, usePage } from '@inertiajs/react'
 import moment from 'moment';
 import { BsThreeDots } from 'react-icons/bs';
+import { useChatMessageStore } from '@/store/chatMessageStore';
+import clsx from 'clsx';
 
 export default function ChatHeader() {
-    const { user } = usePage().props;
+    const { user, toggleSidebarRight, showSidebarRight } = useChatMessageStore();
+
     return (
         <div className='flex h-14 items-center justify-between border-b border-secondary p-2 shadow-sm'>
             <div className="flex items-center gap-2">
@@ -34,9 +37,22 @@ export default function ChatHeader() {
 
             </div>
             <button
+                onClick={toggleSidebarRight}
                 className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-secondary focus:bg-secondary"
             >
-                <BsThreeDots />
+                {showSidebarRight ? (
+                    <div
+                        className={clsx(
+                            "rounded-full p-0.5 text-sm text-white",
+                            !user.message_color && "bg-primary",
+                        )}
+                        style={{ background: user?.message_color }}
+                    >
+                        <BsThreeDots />
+                    </div>
+                ) : (
+                    <BsThreeDots />
+                )}
             </button>
         </div>
     )
