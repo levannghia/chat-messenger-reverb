@@ -3,10 +3,11 @@ import { useChatMessageStore } from '@/store/chatMessageStore';
 import clsx from 'clsx';
 import moment from 'moment';
 import React, { Fragment } from 'react'
+import DeleteMessage from './DeleteMessage';
 
 export default function ChatMessages() {
     const { auth } = useAppStore();
-    const {user} = useChatMessageStore();
+    const { user } = useChatMessageStore();
 
     return (
         <div className="relative flex flex-1 flex-col gap-[3px] overflow-x-hidden">
@@ -38,6 +39,7 @@ export default function ChatMessages() {
                                     </span>
                                 </div>
                             </div>
+                            <DeleteMessage message={""} />
                         </div>
                     </div>
                 </div>
@@ -64,7 +66,7 @@ export default function ChatMessages() {
                                 </span>
                             </div>
 
-                            {/* <DeleteMessage message={message} /> */}
+                            <DeleteMessage message={""} />
                         </div>
                     </div>
                 </div>
