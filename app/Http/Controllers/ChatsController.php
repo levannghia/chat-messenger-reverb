@@ -25,8 +25,10 @@ class ChatsController extends Controller
     }
 
     public function loadChats() {
+        dd("OK");
         try {
             $chats = $this->chats();
+            dd($chats);
             return $this->ok($chats);
         } catch (\Exception $e) {
             return $this->oops($e->getMessage());
@@ -47,7 +49,7 @@ class ChatsController extends Controller
             $user = User::find($id);
             $chats = $this->chats();
             $messages = $this->messages($id);
-
+            // dd($chats);
             if(!$user) {
                 throw new \Exception('User or group not found');
             }
@@ -81,9 +83,8 @@ class ChatsController extends Controller
                 'deleted_in_id' => null,
             ]);
 
-            return $this->ok(data: $chats);
-
             DB::commit();
+            return $this->ok(data: $chats, code: 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->oops($e->getMessage());

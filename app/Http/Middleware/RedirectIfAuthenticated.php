@@ -11,9 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RedirectIfAuthenticated extends MiddlewareRedirectIfAuthenticated
 {
-   /**
+    /**
      * Get the default URI the user should be redirected to when they are authenticated.
      */
+
     protected function defaultRedirectUri(): string
     {
         foreach ([AppServiceProvider::HOME] as $uri) {
@@ -26,7 +27,7 @@ class RedirectIfAuthenticated extends MiddlewareRedirectIfAuthenticated
 
         foreach ([AppServiceProvider::HOME] as $uri) {
             if (isset($routes[$uri])) {
-                return '/'.$uri;
+                return '/' . $uri;
             }
         }
 

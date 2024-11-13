@@ -52,10 +52,11 @@ class User extends Authenticatable
         ];
     }
 
-    protected function isOnline(): Attribute {
+    protected function isOnline(): Attribute
+    {
         return Attribute::make(
-            get: fn ($value, $attribute) => (bool) $value && (bool) $attribute['active_status'],
-            set: fN ($value) => (int) $value 
+            get: fn ($value, $attributes) => (bool) $value && (bool) $attributes['active_status'],
+            set: fn ($value) => (int) $value
         );
     }
 

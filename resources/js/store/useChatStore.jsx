@@ -1,3 +1,4 @@
+import { fetchChats } from "@/Api/chats";
 import { usePage } from "@inertiajs/react";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -18,23 +19,22 @@ export const useChatStore = create((set) => ({
         next_page_url: "",
         prev_page_url: "",
     },
-    setChats: (value) => set({chats: value}),
-    setPaginate: (value) => set({paginate: value}),
+    setChats: (value) => set({ chats: value }),
+    setPaginate: (value) => set({ paginate: value }),
     refetchChats: async () => {
         const lastSync = localStorage.getItem("last-sync-chats");
         const currentTime = moment();
 
-        if(lastSync && currentTime.diff(moment(parseInt(lastSync))) < 3000) return;
+        if (lastSync && currentTime.diff(moment(parseInt(lastSync))) < 3000) return;
         localStorage.setItem("last-sync-chats", currentTime.valueOf().toString());
 
-        const currentRoute = route().current();
-        if(currentRoute = "chats.*") {
-            
+        if (route().current("chats.*")) {
+            return fetchChats().then((response) => setChats(response.data.data.data));
         }
     }
 }))
 
-export const ChatProvider = ({children}) => {
+export const ChatProvider = ({ children }) => {
     const props = usePage().props;
     const [isFirstLoading, setIsFirstLoading] = useState(true);
     const { chats, paginate, setChats, setPaginate, refetchChats } = useChatStore();

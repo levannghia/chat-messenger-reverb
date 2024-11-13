@@ -1,7 +1,7 @@
 import { saveMessage } from '@/Api/chat-messages';
 import { useAppStore } from '@/store/appStore';
 import { useChatMessageStore } from '@/store/chatMessageStore';
-import { useForm } from '@inertiajs/react';
+import { useChatStore } from '@/store/useChatStore';
 import clsx from 'clsx'
 import EmojiPicker from 'emoji-picker-react';
 import React, { useEffect, useRef, useState } from 'react'
@@ -15,7 +15,8 @@ export default function ChatFooter({
   onSelectOrPreviewFiles,
 }) {
   const { theme, auth } = useAppStore();
-  const { user } = useChatMessageStore();
+  const { refetchChats } = useChatStore();
+  const { user, setMessages, messages } = useChatMessageStore();
   const [message, setMessage] = useState("");
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
   const [textareaHeight, setTextareaHeight] = useState(48);
@@ -41,11 +42,11 @@ export default function ChatFooter({
 
   const handleOnKeyDown = (e) => {
     const onPressBackspace = e.key === 'Backspace';
-    const onPressInter = e.key === 'Enter';
+    const onPressEnter = e.key === 'Enter';
 
-    if (onPressBackspace && !e.shiftKey) {
+    if (onPressEnter && !e.shiftKey) {
       e.preventDefault();
-      handleOnSubmit();
+      handleOnSubmit(e);
     }
 
     if (onPressBackspace) {
@@ -87,6 +88,8 @@ export default function ChatFooter({
         textareaRef.current.focus();
 
         const data = response.data.data;
+        setMessages([...messages, data]);
+        refetchChats();
       })
       .finally(() => setProcessing(false));
   }
@@ -114,7 +117,7 @@ export default function ChatFooter({
           className={clsx('absolute bottom-14 right-0 z-10', isOpenEmoji ? 'block' : 'hidden')}
         >
           <EmojiPicker
-            theme={theme === 'system' ? 'auto' : theme}
+            theme={theme === "system" ? "auto" : theme}
             skinTonesDisabled={true}
             height={400}
             onEmojiClick={({ emoji }) => handleOnEmojiClick(emoji)}
