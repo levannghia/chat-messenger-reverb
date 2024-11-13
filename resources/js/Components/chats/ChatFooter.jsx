@@ -1,4 +1,7 @@
+import { saveMessage } from '@/Api/chat-messages';
 import { useAppStore } from '@/store/appStore';
+import { useChatMessageStore } from '@/store/chatMessageStore';
+import { useForm } from '@inertiajs/react';
 import clsx from 'clsx'
 import EmojiPicker from 'emoji-picker-react';
 import React, { useEffect, useRef, useState } from 'react'
@@ -11,7 +14,8 @@ export default function ChatFooter({
   closeOnPreview,
   onSelectOrPreviewFiles,
 }) {
-  const {theme, auth} = useAppStore();
+  const { theme, auth } = useAppStore();
+  const { user } = useChatMessageStore();
   const [message, setMessage] = useState("");
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
   const [textareaHeight, setTextareaHeight] = useState(48);
@@ -25,13 +29,13 @@ export default function ChatFooter({
 
   const handleOnChange = (e) => {
     setMessage(e.target.value);
-    if(textareaRef.current) {
-      const {scrollHeight, clientHeight} = textareaRef.current;
+    if (textareaRef.current) {
+      const { scrollHeight, clientHeight } = textareaRef.current;
       // console.log(scrollHeight, clientHeight);
-      if(scrollHeight !== clientHeight) {
+      if (scrollHeight !== clientHeight) {
         setTextareaHeight(clientHeight + 4);
       }
-      
+
     }
   }
 
@@ -39,17 +43,18 @@ export default function ChatFooter({
     const onPressBackspace = e.key === 'Backspace';
     const onPressInter = e.key === 'Enter';
 
-    if(onPressBackspace && !e.shiftKey) {
+    if (onPressBackspace && !e.shiftKey) {
       e.preventDefault();
+      handleOnSubmit();
     }
 
-    if(onPressBackspace) {
+    if (onPressBackspace) {
       const target = e.target;
       const lines = target.value.split("\n");
       console.log(lines);
-      
-      if(target.offsetHeight > 48) {
-        if(lines[lines.length - 1] === "") {
+
+      if (target.offsetHeight > 48) {
+        if (lines[lines.length - 1] === "") {
           setTextareaHeight((prev) => prev - 24);
         }
       }
@@ -68,15 +73,34 @@ export default function ChatFooter({
   const handleOnEmojiClick = (emoji) => {
     setMessage((preMsg) => preMsg + emoji)
   };
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    setProcessing(true);
+    if (message.length === 0) return;
+
+    saveMessage(user, message)
+      .then((response) => {
+        setMessage("");
+        setIsOpenEmoji(false);
+        setTextareaHeight(48);
+        textareaRef.current.focus();
+
+        const data = response.data.data;
+      })
+      .finally(() => setProcessing(false));
+  }
+
   return (
     <form
       className='flex items-end gap-2 bg-background p-2 text-foreground'
+      onSubmit={handleOnSubmit}
     >
       <label htmlFor="file"
         className='mt-1 cursor-pointer rounded-full p-2 text-primary transition-all hover:bg-secondary focus:bg-secondary'
       >
         <BsPlusLg className='h-6 w-6' />
-        <input type="file" id="file" className='hidden' multiple onChange={onSelectFile}/>
+        <input type="file" id="file" className='hidden' multiple onChange={onSelectFile} />
       </label>
       <div className='relative flex flex-1 items-end'>
         <button
@@ -93,13 +117,13 @@ export default function ChatFooter({
             theme={theme === 'system' ? 'auto' : theme}
             skinTonesDisabled={true}
             height={400}
-            onEmojiClick={({emoji}) => handleOnEmojiClick(emoji)}
+            onEmojiClick={({ emoji }) => handleOnEmojiClick(emoji)}
           />
         </div>
         <textarea
           paceholder="Aa"
           className="max-h-[7.5rem] w-full resize-none rounded-xl border border-secondary bg-secondary pr-10 text-foreground focus:border-transparent focus:ring-transparent"
-          style={{height: `${textareaHeight}px`,}}
+          style={{ height: `${textareaHeight}px`, }}
           value={message}
           ref={textareaRef}
           onKeyDown={handleOnKeyDown}
@@ -110,10 +134,11 @@ export default function ChatFooter({
         className={clsx(
           "mb-1 flex rounded-full p-2 text-primary transition-all disabled:cursor-not-allowed",
           message.trim().length === 0 &&
-            "hover:bg-secondary focus:bg-secondary",
+          "hover:bg-secondary focus:bg-secondary",
           message.trim().length > 0 && !processing && "bg-primary !text-white",
         )}
         disabled={processing}
+        onClick={handleOnSubmit}
       >
         <BiSend className="h-6 w-6" />
       </button>

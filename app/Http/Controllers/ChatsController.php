@@ -6,6 +6,7 @@ use App\Models\ChatMessage;
 use App\Models\User;
 use App\Traits\Chat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ChatsController extends Controller
@@ -61,6 +62,31 @@ class ChatsController extends Controller
             return back()->with([
                 'error_msg' => $e->getMessage()
             ]);
+        }
+    }
+
+    public function store(Request $request) {
+        DB::beginTransaction();
+        try {
+            $attachments = [];
+
+            /**
+             * @var ChatMessage $chat
+             */
+            $chats = ChatMessage::create([
+                'from_id' => auth()->id(),
+                'to_id' => $request->to_id,
+                'to_type' => User::class,
+                'body' => $request->body,
+                'deleted_in_id' => null,
+            ]);
+
+            return $this->ok(data: $chats);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->oops($e->getMessage());
         }
     }
 }
