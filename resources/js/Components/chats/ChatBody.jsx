@@ -1,7 +1,7 @@
 import { useAppStore } from '@/store/appStore'
 import { useChatMessageStore } from '@/store/chatMessageStore';
 import moment from 'moment';
-import React from 'react'
+import React, { useState } from 'react'
 import ChatMessages from './ChatMessages';
 
 export default function ChatBody({

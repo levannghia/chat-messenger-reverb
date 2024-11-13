@@ -44,21 +44,22 @@ export const useChatMessageStore = create((set) => ({
     setPaginate: (value) => set({paginate: value}),
     toggleSidebarRight: () => {
         const currentValue = localStorage.getItem("toggle-sidebar-right") === "true";
-        localStorage.setItem('toggle-sidebar-right', String(!currentValue));     
+        localStorage.setItem('toggle-sidebar-right', String(!currentValue));
         set({showSidebarRight: !currentValue});
     }
 }))
 
 export const ChatMessageProvider = ({children}) => {
     const props = usePage().props;
+    
     const [isFirstLoading, setIsFirstLoading] = useState(true);
     const {setUser, setMessages, setPaginate} = useChatMessageStore();
 
     useEffect(() => {
         setIsFirstLoading(false);
         setUser(props.user);
-        // setMessages(props.messages?.data);
-        // setPaginate(props.messages);
+        setMessages(props.messages?.data);
+        setPaginate(props.messages);
     }, [])
 
     return <>{children}</>

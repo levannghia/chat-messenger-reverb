@@ -32,10 +32,20 @@ class ChatsController extends Controller
         }
     }
 
+    public function loadMessages(string $id) {
+        try {
+            $messages = $this->messages($id);
+            return $this->ok($messages);
+        } catch (\Exception $e) {
+            return $this->oops($e->getMessage());
+        }
+    }
+
     public function show(string $id) {
         try {
             $user = User::find($id);
             $chats = $this->chats();
+            $messages = $this->messages($id);
 
             if(!$user) {
                 throw new \Exception('User or group not found');
@@ -44,7 +54,7 @@ class ChatsController extends Controller
             return Inertia::render('Chats/Show', [
                 'chats' => $chats, 
                 'user' => $user,
-                'messages' => []
+                'messages' => $messages
             ]);
 
         } catch (\Exception $e) {
