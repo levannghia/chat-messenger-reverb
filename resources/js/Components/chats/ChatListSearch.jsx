@@ -19,7 +19,7 @@ export default function ChatListSearch({ search, setSearch }) {
         if (!isFirstLoading) {
             fetchChats(debounceSearch).then((response) => {
                 // console.log(response.data);
-                // setChats(response.data.data.chats);
+                setChats(response.data.data.data);
                 setPaginate(response.data.data)
             })
             

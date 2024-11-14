@@ -20,15 +20,13 @@ class ChatsController extends Controller
                 'chats' => $chats,
             ]);
         } catch (\Exception $e) {
-           dd($e->getMessage());
+            return $this->oops($e->getMessage());
         }
     }
 
     public function loadChats() {
-        dd("OK");
         try {
             $chats = $this->chats();
-            dd($chats);
             return $this->ok($chats);
         } catch (\Exception $e) {
             return $this->oops($e->getMessage());
@@ -47,7 +45,6 @@ class ChatsController extends Controller
     public function show(string $id) {
         try {
             $user = User::find($id);
-            $chats = $this->chats();
             $messages = $this->messages($id);
             // dd($chats);
             if(!$user) {
@@ -55,7 +52,7 @@ class ChatsController extends Controller
             }
             $user->chat_type = ChatMessage::CHAT_TYPE;
             return Inertia::render('Chats/Show', [
-                'chats' => $chats, 
+                'chats' => $this->chats(), 
                 'user' => $user,
                 'messages' => $messages
             ]);
