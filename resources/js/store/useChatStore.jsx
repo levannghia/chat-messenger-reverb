@@ -29,7 +29,7 @@ export const useChatStore = create((set) => ({
         localStorage.setItem("last-sync-chats", currentTime.valueOf().toString());
 
         if (route().current("chats.*")) {
-            return fetchChats().then((response) => setChats(response.data.data.data));
+            return fetchChats().then((response) => set({ chats: response.data.data.data }));
         }
     }
 }))
