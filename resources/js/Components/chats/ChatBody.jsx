@@ -13,8 +13,8 @@ export default function ChatBody({
   const { auth } = useAppStore();
   const { user } = useChatMessageStore();
 
-  return (
-    <div className='relative max-h-[100vh_-_120px] flex-1 overflow-auto p-2 pt-8'>
+  return !onDrop && (
+    <div className='relative max-h-[100vh_-_120px] flex-1 overflow-auto p-2 pt-8' ref={chatContainerRef}>
       <div className='justify-center items-center flex flex-col text-center'>
         <div className='picture'>
           <img
@@ -40,8 +40,8 @@ export default function ChatBody({
           )}
         </div>
       </div>
-
       <ChatMessages/>
+      <div ref={bottomRef} className='h-0'/>
     </div>
   )
 }

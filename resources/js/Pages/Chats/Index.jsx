@@ -4,7 +4,7 @@ import { ModalProvider } from '@/Contexts/modal-context'
 import AppLayout from '@/Layouts/AppLayout'
 import SidebarMini from '@/Layouts/partials/SidebarMini'
 import { ChatProvider } from '@/store/useChatStore'
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
 function Chats() {
   return (

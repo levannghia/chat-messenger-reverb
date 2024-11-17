@@ -90,6 +90,8 @@ export default function ChatFooter({
         const data = response.data.data;
         setMessages([...messages, data]);
         refetchChats();
+
+        setTimeout(scrollToBottom, 300)
       })
       .finally(() => setProcessing(false));
   }

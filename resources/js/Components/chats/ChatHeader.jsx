@@ -7,7 +7,7 @@ import { BsThreeDots } from 'react-icons/bs';
 import { useChatMessageStore } from '@/store/chatMessageStore';
 import clsx from 'clsx';
 
-export default function ChatHeader() {
+export default function ChatHeader({onDrop, closeOnPreview}) {
     const { user, toggleSidebarRight, showSidebarRight } = useChatMessageStore();
 
     return (

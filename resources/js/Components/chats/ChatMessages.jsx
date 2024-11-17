@@ -27,9 +27,9 @@ export default function ChatMessages() {
                 const prevDate = sortedAndFilteredMessages[index - 1]?.created_at;
                 const isDifferentDate = !date.isSame(prevDate, "date");
 
-                console.log("date", date);
-                console.log("prevDate", prevDate);
-                console.log("isDifferentDate", isDifferentDate);
+                // console.log("date", date);
+                // console.log("prevDate", prevDate);
+                // console.log("isDifferentDate", isDifferentDate);
                 return (
                     <Fragment key={`message-${message.id}`}>
                         {(isFirstMessage || isDifferentDate) && (
