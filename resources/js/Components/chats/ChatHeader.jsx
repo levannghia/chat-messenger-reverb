@@ -3,11 +3,11 @@ import { FaArrowLeft } from 'react-icons/fa'
 import BadgeOnline from './BadgeOnline'
 import { Link, usePage } from '@inertiajs/react'
 import moment from 'moment';
-import { BsThreeDots } from 'react-icons/bs';
+import { BsThreeDots, BsXLg } from 'react-icons/bs';
 import { useChatMessageStore } from '@/store/chatMessageStore';
 import clsx from 'clsx';
 
-export default function ChatHeader({onDrop, closeOnPreview}) {
+export default function ChatHeader({ onDrop, closeOnPreview }) {
     const { user, toggleSidebarRight, showSidebarRight } = useChatMessageStore();
 
     return (
@@ -36,24 +36,33 @@ export default function ChatHeader({onDrop, closeOnPreview}) {
                 </div>
 
             </div>
-            <button
-                onClick={toggleSidebarRight}
-                className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-secondary focus:bg-secondary"
-            >
-                {showSidebarRight ? (
-                    <div
-                        className={clsx(
-                            "rounded-full p-0.5 text-sm text-white",
-                            !user.message_color && "bg-primary",
-                        )}
-                        style={{ background: user?.message_color }}
-                    >
+            {onDrop ? (
+                <button
+                    className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-secondary focus:bg-secondary"
+                    onClick={closeOnPreview}
+                >
+                    <BsXLg />
+                </button>
+            ) : (
+                <button
+                    onClick={toggleSidebarRight}
+                    className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-secondary focus:bg-secondary"
+                >
+                    {showSidebarRight ? (
+                        <div
+                            className={clsx(
+                                "rounded-full p-0.5 text-sm text-white",
+                                !user.message_color && "bg-primary",
+                            )}
+                            style={{ background: user?.message_color }}
+                        >
+                            <BsThreeDots />
+                        </div>
+                    ) : (
                         <BsThreeDots />
-                    </div>
-                ) : (
-                    <BsThreeDots />
-                )}
-            </button>
+                    )}
+                </button>
+            )}
         </div>
     )
 }

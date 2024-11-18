@@ -14,6 +14,8 @@ export default function Content() {
     const bottomRef = useRef();
     const [onDrag, setOnDrag] = useState(false);
     const [onDrop, setOnDrop] = useState(false);
+    const [attachments, setAttachments] = useState([]);
+    const [selectedPreview, setSelectedPreview] = useState('');
 
     useEffect(() => {
         scrollToBottom();
@@ -41,6 +43,14 @@ export default function Content() {
 
     const onSelectOrPreviewFiles = (files) => {
         if (!files) return
+
+        const droppedFiles = Array.from(files).map((file) => Object.assign(file, {
+            preview: URL.createObjectURL(file)
+        }))
+
+        setAttachments([...attachments, ...droppedFiles]);
+        setSelectedPreview(droppedFiles[0]);
+
         setOnDrag(false);
         setOnDrop(true);
     }
@@ -68,7 +78,14 @@ export default function Content() {
                 scrollToBottom={scrollToBottom}
                 onDrop={onDrop}
             />
-            <PreviewOnDropFile onDrop={onDrop} closeOnPreview={closeOnPreview} />
+            <PreviewOnDropFile
+                onDrop={onDrop}
+                closeOnPreview={closeOnPreview}
+                selectedPreview={selectedPreview}
+                setSelectedPreview={setSelectedPreview}
+                attachments={attachments}
+                setAttachments={setAttachments}
+            />
             <DragFileOverlay onDrag={onDrag} onDrop={onDrop} />
             <ChatFooter scrollToBottom={scrollToBottom} />
         </div>

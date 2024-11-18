@@ -9,7 +9,7 @@ import { useModalContext } from '@/Contexts/modal-context'
 
 function SidebarMini() {
   const { auth } = useAppStore();
-  const {openModal} = useModalContext();
+  const { openModal } = useModalContext();
   const openPreferences = () => {
     openModal({
       view: 'PREFERENCES',
@@ -18,7 +18,10 @@ function SidebarMini() {
   }
 
   return (
-    <div className='order-2 mt-auto flex flex-row justify-between bg-background sm:order-1 sm:mt-0 sm:flex-col sm:items-center sm:justify-center sm:p-2'>
+    <div className={clsx(
+      "order-2 mt-auto flex-row justify-between bg-background sm:order-1 sm:mt-0 sm:flex sm:flex-col sm:items-center sm:justify-center sm:p-2",
+      route().current("chats.show") ? "hidden" : "flex",
+    )}>
       <Link
         href={route('chats.index')}
         className={clsx('relative flex flex-1 items-center justify-center rounded-lg p-3 transition-all hover:bg-secondary sm:flex-initial',
