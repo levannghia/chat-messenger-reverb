@@ -27,6 +27,10 @@ export default function Content() {
         }
     }
 
+    // const onSelectFile = (e) => {
+    //     onSelectOrPreviewFiles(e.target.files)
+    // }
+
     const handleOnDrop = (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -57,6 +61,7 @@ export default function Content() {
 
     const closeOnPreview = () => {
         setOnDrop(false);
+        setAttachments([]);
     }
 
     return (
@@ -87,7 +92,12 @@ export default function Content() {
                 setAttachments={setAttachments}
             />
             <DragFileOverlay onDrag={onDrag} onDrop={onDrop} />
-            <ChatFooter scrollToBottom={scrollToBottom} />
+            <ChatFooter
+                scrollToBottom={scrollToBottom}
+                attachments={attachments}
+                closeOnPreview={closeOnPreview}
+                onSelectOrPreviewFiles={onSelectOrPreviewFiles}
+            />
         </div>
     )
 }

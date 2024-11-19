@@ -8,9 +8,28 @@ export default function PreviewOnDropFile({
   closeOnPreview,
   selectedPreview,
   setSelectedPreview,
-  attachments,
+  attachments = [],
   setAttachments,
 }) {
+
+  const changeSelectedImage = (file) => {
+    setSelectedPreview(file);
+  }
+
+  const removeAttachment = (file) => {
+    setAttachments(attachments.filter((f) => f.preview !== file.preview));
+
+    const attachmentIndex = attachments.findIndex((f) => f.preview === file.preview);
+    console.log(attachmentIndex);
+    if(attachmentIndex === 0) {
+      setSelectedPreview(attachments[attachmentIndex + 1])
+    } else if (attachmentIndex > 0 && file.preview === selectedPreview.preview) {
+      setSelectedPreview(attachments[attachmentIndex - 1])
+    }
+
+    if(attachments.length - 1 === 0) closeOnPreview();
+  }
+
   return onDrop && (
     <div className="relative flex h-full max-h-[100vh_-_120px] flex-1 flex-col overflow-auto p-2 pt-8">
       <div className="flex h-full flex-1 items-center justify-center overflow-hidden p-2">
@@ -41,7 +60,7 @@ export default function PreviewOnDropFile({
                   ? "border-primary"
                   : "border-transparent",
               )}
-              onClick={() => { }}
+              onClick={() => changeSelectedImage(file)}
             >
               {isImageLinkValid(file.name) ? (
                 <img
@@ -57,7 +76,7 @@ export default function PreviewOnDropFile({
             </button>
             <button
               className="absolute right-1 top-1 z-10 hidden h-4 w-4 items-center justify-center rounded-full bg-danger text-white group-hover:flex"
-              onClick={() => { }}
+              onClick={() => removeAttachment(file)}
             >
               <BsX />
             </button>

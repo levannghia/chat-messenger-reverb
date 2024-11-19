@@ -78,7 +78,7 @@ export default function ChatFooter({
   const handleOnSubmit = (e) => {
     e.preventDefault();
     setProcessing(true);
-    if (message.length === 0) return;
+    if (message.length === 0 && attachments.length === 0 || processing) return;
 
     saveMessage(user, message)
       .then((response) => {
