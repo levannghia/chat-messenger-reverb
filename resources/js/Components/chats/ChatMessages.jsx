@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import moment from 'moment';
 import React, { Fragment } from 'react'
 import DeleteMessage from './DeleteMessage';
+import { isImageLinkValid } from '@/utils';
 
 export default function ChatMessages() {
     const { auth } = useAppStore();
@@ -27,6 +28,8 @@ export default function ChatMessages() {
                 const prevDate = sortedAndFilteredMessages[index - 1]?.created_at;
                 const isDifferentDate = !date.isSame(prevDate, "date");
 
+                const messageWithImages = message.attachments.filter((attachment) => isImageLinkValid(attachment.original_name))
+                const messageWithFiles = message.attachments.filter((attachment) => !isImageLinkValid(attachment.original_name))
                 // console.log("date", date);
                 // console.log("prevDate", prevDate);
                 // console.log("isDifferentDate", isDifferentDate);
@@ -92,6 +95,20 @@ export default function ChatMessages() {
                                         </div>
                                         <DeleteMessage message={message} />
                                     </div>
+                                    {message.attachments && message.attachments.length > 0 && (
+                                        <div className='group relative flex justify-end gap-1'>
+                                            <div className="order-2 flex max-w-xs flex-col justify-end">
+                                                <div className="grid grid-cols-3">
+                                                    {messageWithImages.map((attachment) => (
+                                                        <div className='group/image flex w-24 h-24 items-center justify-center overflow-hidden rounded-xl p-1 translate-all hover:bg-secondary' key={attachment.file_name}>
+                                                            <img src={`${attachment.file_path}/${attachment.file_name}`} alt={attachment.original_name} className='h-full object-cover rounded-lg'/>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
                                 </div>
                             </div>
                         )}

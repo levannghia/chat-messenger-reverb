@@ -53,6 +53,7 @@ class ChatsController extends Controller
                 throw new \Exception('User or group not found');
             }
             $user->chat_type = ChatMessage::CHAT_TYPE;
+
             return Inertia::render('Chats/Show', [
                 'chats' => $this->chats(), 
                 'user' => $user,
@@ -96,7 +97,7 @@ class ChatsController extends Controller
             /**
              * @var ChatMessage $chat
              */
-            $chats = ChatMessage::create([
+            $chat = ChatMessage::create([
                 'from_id' => auth()->id(),
                 'to_id' => $request->to_id,
                 'to_type' => User::class,
@@ -105,9 +106,10 @@ class ChatsController extends Controller
             ]);
 
             $chat->attachments()->createMany($attachments);
+            $chat->attachments = $chat->attachments;
 
             DB::commit();
-            return $this->ok(data: $chats, code: 201);
+            return $this->ok(data: $chat, code: 201);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->oops($e->getMessage());

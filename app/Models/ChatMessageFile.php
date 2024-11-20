@@ -13,5 +13,7 @@ class ChatMessageFile extends Model
     protected $guarded = ['id'];
     protected $hidden = ['deleted_in_id'];
 
-    
+    public function sent_by() {
+        return $this->belongsTo(User::class, 'sent_by_id')->selectRaw('id, IF(id = ?, "You", name) as name, avatar', [auth()->id()]);
+    }
 }

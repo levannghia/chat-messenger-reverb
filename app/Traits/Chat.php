@@ -79,7 +79,11 @@ trait Chat
 
     public function messages(string $id)
     {
-        $chats = ChatMessage::with(['to', 'from', 'attachments'])
+        $chats = ChatMessage::with([
+            'to',
+            'from',
+            'attachments' => fn($query) => $query->with('sent_by')
+        ])
             ->where(function (Builder $query) use ($id) {
                 $query->where('from_id', auth()->id())->where('to_id', $id);
             })
