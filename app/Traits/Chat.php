@@ -9,6 +9,8 @@ use Illuminate\Database\Query\JoinClause;
 
 trait Chat
 {
+    protected $validImageExtensions = ["jpg", "jpeg", "png", "gif", "svg", "bmp", "webp"];
+
     public function chats()
     {
         if (request()->filled('query')) {

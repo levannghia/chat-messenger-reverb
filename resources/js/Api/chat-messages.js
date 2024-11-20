@@ -1,4 +1,4 @@
-export const saveMessage = (user, message, attachments) => {
+export const saveMessage = (user, message, attachments = []) => {
     return window.axios.post(
         route('chats.store'),
         {

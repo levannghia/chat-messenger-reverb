@@ -80,7 +80,7 @@ export default function ChatFooter({
     setProcessing(true);
     if (message.length === 0 && attachments.length === 0 || processing) return;
 
-    saveMessage(user, message)
+    saveMessage(user, message, attachments)
       .then((response) => {
         setMessage("");
         setIsOpenEmoji(false);
