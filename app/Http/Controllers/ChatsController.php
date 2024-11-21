@@ -53,7 +53,7 @@ class ChatsController extends Controller
                 throw new \Exception('User or group not found');
             }
             $user->chat_type = ChatMessage::CHAT_TYPE;
-
+            
             return Inertia::render('Chats/Show', [
                 'chats' => $this->chats(), 
                 'user' => $user,
