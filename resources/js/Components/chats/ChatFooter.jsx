@@ -82,6 +82,7 @@ export default function ChatFooter({
 
     saveMessage(user, message, attachments)
       .then((response) => {
+        closeOnPreview();
         setMessage("");
         setIsOpenEmoji(false);
         setTextareaHeight(48);

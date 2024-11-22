@@ -4,6 +4,7 @@ import moment from 'moment';
 import React from 'react'
 import { BsFileEarmarkText } from 'react-icons/bs';
 import DeleteMessage from './DeleteMessage';
+import DeleteSelectedFileInChat from './DeleteSelectedFileInChat';
 
 export default function ChatMessageAttachment({
     message,
@@ -45,12 +46,12 @@ export default function ChatMessageAttachment({
                                         onClick={() => setSelectedMedia(attachment)}
                                     />
 
-                                    {/* {message.attachments?.length > 1 && (
+                                    {message.attachments?.length > 1 && (
                                         <DeleteSelectedFileInChat
                                             message={message}
                                             attachment={attachment}
                                         />
-                                    )} */}
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -79,12 +80,12 @@ export default function ChatMessageAttachment({
                                             </div>
                                         </div>
 
-                                        {/* {message.attachments?.length > 1 && (
+                                        {message.attachments?.length > 1 && (
                                             <DeleteSelectedFileInChat
                                                 message={message}
                                                 attachment={attachment}
                                             />
-                                        )} */}
+                                        )}
                                     </div>
                                 </div>
                             ))}
