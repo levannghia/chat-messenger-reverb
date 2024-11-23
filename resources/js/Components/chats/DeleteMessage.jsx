@@ -7,7 +7,11 @@ export default function DeleteMessage({ message, className }) {
     const { openModal } = useModalContext();
 
     const deleteConfirmation = () => {
-        
+        openModal({
+            view: 'DELETE_MESSAGE_CONFIRMATION',
+            size: 'lg',
+            payload: message
+        })
     }
 
     return (
