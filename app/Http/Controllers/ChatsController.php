@@ -115,4 +115,8 @@ class ChatsController extends Controller
             return $this->oops($e->getMessage());
         }
     }
+
+    public function destroy(string $id) {
+        
+    }
 }
