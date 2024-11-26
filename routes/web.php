@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chats/{id}/messages', [ChatsController::class, 'loadMessages'])->name('chats.messages');
     Route::post('/chats', [ChatsController::class, 'store'])->name('chats.store');
     Route::delete('chats/{id}', [ChatsController::class, 'destroy'])->name('chats.destroy');
+    Route::delete('chats/{id}/file/{file_name}', [ChatsController::class, 'deleteSelectedFile'])->name('chats.delete_file');
     Route::get('/contacts', [ChatsController::class, 'index'])->name('contacts.index');
     Route::get('/archived-chats', [ChatsController::class, 'index'])->name('archived_chats.index');
     

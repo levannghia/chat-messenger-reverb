@@ -84,6 +84,8 @@ trait Chat
             'from',
             'attachments' => fn($query) => $query->with('sent_by')
         ])
+            ->forUserOrGroup($id)
+            ->deletedInIds()
             ->where(function (Builder $query) use ($id) {
                 $query->where('from_id', auth()->id())->where('to_id', $id);
             })

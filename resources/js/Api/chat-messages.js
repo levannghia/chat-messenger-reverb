@@ -13,3 +13,11 @@ export const saveMessage = (user, message, attachments = []) => {
         }
     )
 }
+
+export const deleteMessage = (message) => {
+    return window.axios.delete(route("chats.destroy", message.id));
+}
+
+export const deleteFileInChat = (message, attachment) => {
+    return window.axios.delete(route('chats.delete_file', [message.id, attachment.file_name]));
+}

@@ -2,15 +2,24 @@ import React, { Fragment } from 'react'
 import Modal from "@/components/modals/Modal";
 import { useModalContext } from '@/Contexts/modal-context'
 import { useChatStore } from '@/store/useChatStore';
+import { deleteMessage } from '@/Api/chat-messages';
+import { useChatMessageStore } from '@/store/chatMessageStore';
 
 export default function DeleteMessageConfirmation() {
     const { closeModal, data: message } = useModalContext();
     const { chats, setChats } = useChatStore();
+    const {refetchChats} = useChatStore();
+    const {messages, setMessages} = useChatMessageStore();
     
     if(!message) return
 
     const handleDeleteChat = () => {
+        deleteMessage(message).then((response) => {
+            refetchChats();
+            setMessages([...messages.filter((m) => m.id !== message.id)]);
 
+            closeModal();
+        })
     }
 
     return (
