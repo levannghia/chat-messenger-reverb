@@ -117,6 +117,17 @@ class ChatsController extends Controller
     }
 
     public function destroy(string $id) {
-        
+        DB::transaction();
+        try {
+            $chat = ChatMessage::find($id);
+            if(!$chat) {
+                throw new \Exception("Chat not found");
+                
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+        }
     }
 }
