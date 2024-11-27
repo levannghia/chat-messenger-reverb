@@ -6,10 +6,15 @@ import { relativeTime } from '@/utils';
 import { useChatStore } from '@/store/useChatStore';
 import { useChatContext } from '@/Contexts/chat-context';
 import BadgeNotification from './BadgeNotification';
+import { maskAsRead } from '@/Api/chats';
 
 export default function ChatList({ search, href, className }) {
     const { chats } = useChatStore();
     
+    const handleMarkAsRead = (chat) => {
+        !chat.is_read && maskAsRead(chat)
+    }
+
     if(chats.length === 0) return;
 
     return (

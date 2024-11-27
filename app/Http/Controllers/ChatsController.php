@@ -154,6 +154,26 @@ class ChatsController extends Controller
     }
 
     public function deleteSelectedFile(string $id, string $file_name) {
-        
+        DB::beginTransaction();
+        try {
+            $chat = ChatMessage::find($id);
+            if(!$chat) {
+                throw new \Exception("Chat not found");
+            }
+
+            $attachment = $chat->attachments->where('file_name', $file_name)->first();
+            if($attachment) {
+                $deletedAttachmentInIds = collect(json_decode($attachment->deleted_in_id) ?? []);
+                $attachment->update([
+                    'deleted_in_id' => json_encode($deletedAttachmentInIds->push(['id' => auth()->id()])->toArray())
+                ]);
+            }
+
+            DB::commit();
+            return $this->ok(code: 204);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->oops($e->getMessage());
+        }
     }
 }

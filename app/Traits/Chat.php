@@ -82,7 +82,7 @@ trait Chat
         $chats = ChatMessage::with([
             'to',
             'from',
-            'attachments' => fn($query) => $query->with('sent_by')
+            'attachments' => fn($query) => $query->with('sent_by')->deletedInIds()
         ])
             ->forUserOrGroup($id)
             ->deletedInIds()
