@@ -28,6 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/chats', [ChatsController::class, 'store'])->name('chats.store');
     Route::delete('chats/{id}', [ChatsController::class, 'destroy'])->name('chats.destroy');
     Route::delete('chats/{id}/file/{file_name}', [ChatsController::class, 'deleteSelectedFile'])->name('chats.delete_file');
+    Route::post('/chats/{id}/read', [ChatsController::class, 'markAsRead'])->name('chats.mark_as_read');
+    Route::post('/chats/{id}/unread', [ChatsController::class, 'markAsUnread'])->name('chats.mark_as_unread');
     Route::get('/contacts', [ChatsController::class, 'index'])->name('contacts.index');
     Route::get('/archived-chats', [ChatsController::class, 'index'])->name('archived_chats.index');
     

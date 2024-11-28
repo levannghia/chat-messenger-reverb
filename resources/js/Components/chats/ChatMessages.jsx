@@ -22,6 +22,8 @@ export default function ChatMessages() {
         })
         .filter((message) => message.body || message.attachments?.length > 0)
 
+        const showProfile = true;
+
     return (
         <div className="relative flex flex-1 flex-col gap-[3px] overflow-x-hidden">
             {sortedAndFilteredMessages.map((message, index) => {

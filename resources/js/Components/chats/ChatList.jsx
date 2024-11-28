@@ -31,7 +31,7 @@ export default function ChatList({ search, href, className }) {
                         <Link
                             as='button'
                             href={route(href, chat.id)}
-                            onClick={() => { }}
+                            onClick={() => handleMarkAsRead(chat)}
                             className={clsx(
                                 "relative flex w-full flex-1 items-center gap-3 rounded-lg p-3 text-left transition-all group-hover:bg-secondary"
                                 // route().current(href, chat.id) && "bg-secondary",
