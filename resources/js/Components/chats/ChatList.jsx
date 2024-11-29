@@ -7,15 +7,16 @@ import { useChatStore } from '@/store/useChatStore';
 import { useChatContext } from '@/Contexts/chat-context';
 import BadgeNotification from './BadgeNotification';
 import { maskAsRead } from '@/Api/chats';
+import ChatListAction from './ChatListAction';
 
 export default function ChatList({ search, href, className }) {
     const { chats } = useChatStore();
-    
+
     const handleMarkAsRead = (chat) => {
         !chat.is_read && maskAsRead(chat)
     }
 
-    if(chats.length === 0) return;
+    if (chats.length === 0) return;
 
     return (
         <div className='relative max-h-[calc(100vh_-_158px)] flex-1 overflow-y-auto px-2 sm:max-h-max sm: pb-2'>
@@ -33,9 +34,9 @@ export default function ChatList({ search, href, className }) {
                             href={route(href, chat.id)}
                             onClick={() => handleMarkAsRead(chat)}
                             className={clsx(
-                                "relative flex w-full flex-1 items-center gap-3 rounded-lg p-3 text-left transition-all group-hover:bg-secondary"
-                                // route().current(href, chat.id) && "bg-secondary",
-                                // chat.is_contact_blocked && "opacity-25",
+                                "relative flex w-full flex-1 items-center gap-3 rounded-lg p-3 text-left transition-all group-hover:bg-secondary",
+                                route().current(href, chat.id) && "bg-secondary",
+                                chat.is_contact_blocked && "opacity-25",
                             )}>
                             {search.length === 0 && chat.created_at ? (
                                 <>
@@ -77,8 +78,10 @@ export default function ChatList({ search, href, className }) {
                                     </div>
                                 </>
                             )}
-                            {!chat.is_read && <BadgeNotification/>}
+
                         </Link>
+                        {chat.body && <ChatListAction chat={chat} />}
+                        {!chat.is_read && <BadgeNotification />}
                     </div>
                 ))}
         </div>

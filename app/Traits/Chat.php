@@ -33,7 +33,11 @@ trait Chat
                 ->withQueryString()
                 ->setPath(route('chats.users'));
         } else {
-            $latestMessage = ChatMessage::where('from_id', auth()->id())->orWhere('to_id', auth()->id())
+            $latestMessage = ChatMessage::where(function(Builder $query) {
+                $query->where('from_id', auth()->id())
+                ->orWhere('to_id', auth()->id());
+            })
+                ->deletedInIds()
                 ->selectRaw("
             MAX(sort_id) as sort_id,
              CASE 
@@ -62,12 +66,12 @@ trait Chat
             foreach ($chats as $key => $chat) {
                 $from = $chat->from_id === auth()->id() ? 'You: ' : '';
                 $attachment = '';
-                if(!$chat->body && $chat->attachments) {
+                if (!$chat->body && $chat->attachments) {
                     $fileName = $chat->attachments->first()?->original_name;
-                    if(in_array(pathinfo($fileName, PATHINFO_EXTENSION), $this->validImageExtensions)) {
-                        $attachment = '<div class="flex items-center gap-1">'. $from . ChatMessage::SVG_IMAGE_ATTACHMENT.' Photo</div>';
+                    if (in_array(pathinfo($fileName, PATHINFO_EXTENSION), $this->validImageExtensions)) {
+                        $attachment = '<div class="flex items-center gap-1">' . $from . ChatMessage::SVG_IMAGE_ATTACHMENT . ' Photo</div>';
                     } else {
-                        $attachment = '<div class="flex items-center gap-1">'. $from . ChatMessage::SVG_FILE_ATTACHMENT.' File</div>';
+                        $attachment = '<div class="flex items-center gap-1">' . $from . ChatMessage::SVG_FILE_ATTACHMENT . ' File</div>';
                     }
                 }
                 $mapped = new \stdClass;
@@ -76,7 +80,7 @@ trait Chat
                 $mapped->name = $chat->another_user->name . ($chat->another_user->id === auth()->id() ? ' (You)' : '');
                 $mapped->avatar = $chat->another_user->avatar;
                 $mapped->from_id = $chat->from_id;
-                $mapped->is_read = $seenInId->filter(fn ($item) => $item->id === auth()->id())->count() > 0;
+                $mapped->is_read = $seenInId->filter(fn($item) => $item->id === auth()->id())->count() > 0;
                 $mapped->is_reply = $chat->another_user->id === $chat->from_id;
                 $mapped->is_online = $chat->another_user->is_online == true;
                 $mapped->chat_type = ChatMessage::CHAT_TYPE;
