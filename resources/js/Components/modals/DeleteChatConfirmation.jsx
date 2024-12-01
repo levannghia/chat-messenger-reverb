@@ -4,21 +4,23 @@ import { useModalContext } from '@/Contexts/modal-context'
 import { useChatStore } from '@/store/useChatStore';
 import { deleteMessage } from '@/Api/chat-messages';
 import { useChatMessageStore } from '@/store/chatMessageStore';
+import { deleteChat } from '@/Api/chats';
+import { router } from '@inertiajs/react';
 
-export default function DeleteMessageConfirmation() {
-    const { closeModal, data: message } = useModalContext();
+export default function DeleteChatConfirmation() {
+    const { closeModal, data: chat } = useModalContext();
     const { chats, setChats } = useChatStore();
     const { refetchChats } = useChatStore();
-    const { messages, setMessages } = useChatMessageStore();
 
-    if (!message) return
+    if (!chat) return
 
     const handleDeleteChat = () => {
-        deleteMessage(message).then(() => {
+        deleteChat(chat).then(() => {
             refetchChats();
-            setMessages([...messages.filter((m) => m.id !== message.id)]);
+            setChats([...chats.filter((m) => m.id !== chat.id)]);
 
             closeModal();
+            router.replace(route("chats.index"));
         })
     }
 
@@ -30,9 +32,6 @@ export default function DeleteMessageConfirmation() {
                     This chat will be removed for you, including the files. Others in the
                     chat will still be able to see it.
                 </p>
-                {message.attachments?.length > 0 && (
-                    <p>{message.attachments.length} files will be removed for you.</p>
-                )}
             </Modal.Body>
 
             <Modal.Footer className="flex justify-between gap-4">

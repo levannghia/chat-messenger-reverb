@@ -3,6 +3,9 @@ import Dropdown, { useDropdownContext } from '../Dropdown'
 import clsx from 'clsx';
 import { BsArchive, BsCheck2, BsThreeDots, BsXLg } from 'react-icons/bs';
 import { useAppStore } from '@/store/appStore';
+import { useChatStore } from '@/store/useChatStore';
+import { archiveChat, maskAsRead, maskAsUnread } from '@/Api/chats';
+import { useModalContext } from '@/Contexts/modal-context';
 
 export default function ChatListAction({ chat }) {
     return (
@@ -15,10 +18,47 @@ export default function ChatListAction({ chat }) {
 }
 
 const Action = ({ chat }) => {
+    const {chats, setChats, refetchChats} = useChatStore();
+    const { openModal } = useModalContext();
     const { auth } = useAppStore();
     const { open } = useDropdownContext();
     const dropdownRef = useRef(null);
     const dropdownPosition = (dropdownRef.current?.getBoundingClientRect().bottom || 0) < window.innerHeight - 100
+
+    const handleMarkAsRead = () => {
+        maskAsRead(chat).then(() => {
+            setChats(chats.map((c) => {
+                if(c.id === chat.id) {
+                    c.is_read = true
+                }
+
+                return c;
+            }))
+        })
+    }
+    const handleMarkAsUnread = () => {
+        maskAsUnread(chat).then(() => {
+            setChats(chats.map((c) => {
+                if(c.id === chat.id) {
+                    c.is_read = false
+                }
+
+                return c;
+            }))
+        })
+    }
+    const handleArchiveChat = () => {
+        archiveChat(chat).then(() => {
+            refetchChats();
+        })
+    }
+    const deleteChatConfirmation = () => {
+        openModal({
+            view: 'DELETE_CHAT_CONFIRMATION',
+            size: 'lg',
+            payload: chat
+        })
+    }
 
     return (
         <div ref={dropdownRef}>
@@ -38,7 +78,7 @@ const Action = ({ chat }) => {
                 contentClasses={dropdownPosition ? "" : "mb-7"}
             >
                 {auth.id !== chat.id && auth.id !== chat.from_id && (
-                    <Dropdown.Button>
+                    <Dropdown.Button onClick={chat.is_read ? handleMarkAsUnread : handleMarkAsRead}>
                         <div className='flex items-center gap-2'>
                             <BsCheck2 className='-ml-1 text-lg' />
                             Mark as {chat.is_read ? "Unread" : "Read"}
@@ -46,13 +86,13 @@ const Action = ({ chat }) => {
                     </Dropdown.Button>
                 )}
 
-                <Dropdown.Button>
+                <Dropdown.Button onClick={handleArchiveChat}>
                     <div className='flex items-center gap-2'>
                         <BsArchive className='-ml-1 text-lg' />
                         Archive Chat
                     </div>
                 </Dropdown.Button>
-                <Dropdown.Button>
+                <Dropdown.Button onClick={deleteChatConfirmation}>
                     <div className='flex items-center gap-2'>
                         <BsXLg className='-ml-1 text-lg' />
                         Delete Chat

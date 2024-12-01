@@ -1,4 +1,5 @@
 import Modal from "@/Components/Modal";
+import DeleteChatConfirmation from "@/Components/modals/DeleteChatConfirmation";
 import DeleteMessageConfirmation from "@/Components/modals/DeleteMessageConfirmation";
 import Preferences from "@/Components/modals/Preferences";
 import { createContext, useContext, useReducer } from 'react';
@@ -76,6 +77,7 @@ export const ModalChildren = () => {
         <Modal show={isOpen} onClose={handleOnClose} maxWidth={size}>
             {view === "PREFERENCES" && <Preferences />}
             {view === "DELETE_MESSAGE_CONFIRMATION" && <DeleteMessageConfirmation />}
+            {view == "DELETE_CHAT_CONFIRMATION" && <DeleteChatConfirmation/>}
         </Modal>
     )
 }
