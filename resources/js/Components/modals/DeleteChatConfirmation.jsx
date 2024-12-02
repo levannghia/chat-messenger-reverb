@@ -10,23 +10,25 @@ import { router } from '@inertiajs/react';
 export default function DeleteChatConfirmation() {
     const { closeModal, data: chat } = useModalContext();
     const { chats, setChats } = useChatStore();
-    const { refetchChats } = useChatStore();
+    // const { refetchChats } = useChatStore(); 
 
     if (!chat) return
 
     const handleDeleteChat = () => {
         deleteChat(chat).then(() => {
-            refetchChats();
-            setChats([...chats.filter((m) => m.id !== chat.id)]);
+            if(route().current("chats.index")) {
+                closeModal();
+                setChats([...chats.filter((m) => m.id !== chat.id)]);
+                return; 
+            }
 
-            closeModal();
             router.replace(route("chats.index"));
         })
     }
 
     return (
         <Modal>
-            <Modal.Header title="Delete Message?" onClose={closeModal} />
+            <Modal.Header title="Delete Chat?" onClose={closeModal} />
             <Modal.Body as={Fragment}>
                 <p>
                     This chat will be removed for you, including the files. Others in the

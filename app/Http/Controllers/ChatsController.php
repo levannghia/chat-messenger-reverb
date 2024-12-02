@@ -305,13 +305,13 @@ class ChatsController extends Controller
                     }
                 } else {
                     $chat->update([
-                        'delete_in_id' => json_encode($deleteInId->push(['id' => auth()->id()])->toArray())
+                        'deleted_in_id' => json_encode($deleteInId->push(['id' => auth()->id()])->toArray())
                     ]);
 
                     foreach ($chat->attachments as $attachment) {
                         $deletedAttachmentInId = collect(json_decode($attachment->delete_in_id) ?? []);
                         $attachment->update([
-                            'delete_in_id' => json_encode($deletedAttachmentInId->push(['id' => auth()->id()])->toArray())
+                            'deleted_in_id' => json_encode($deletedAttachmentInId->push(['id' => auth()->id()])->toArray())
                         ]);
                     }
                 }

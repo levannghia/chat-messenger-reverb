@@ -3,6 +3,7 @@ import { useChatMessageStore } from '@/store/chatMessageStore';
 import moment from 'moment';
 import React, { useState } from 'react'
 import ChatMessages from './ChatMessages';
+import SaveOrBlockContent from './SaveOrBlockContent';
 
 export default function ChatBody({
   chatContainerRef,
@@ -42,6 +43,7 @@ export default function ChatBody({
       </div>
       <ChatMessages/>
       <div ref={bottomRef} className='h-0'/>
+      <SaveOrBlockContent/>
     </div>
   )
 }
