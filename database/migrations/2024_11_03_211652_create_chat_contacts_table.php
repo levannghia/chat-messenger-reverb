@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('chat_message_contacts', function (Blueprint $table) {
+        Schema::create('chat_contacts', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id');
             $table->uuid('contact_id');
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chat_message_contacts');
+        Schema::dropIfExists('chat_contacts');
     }
 };
