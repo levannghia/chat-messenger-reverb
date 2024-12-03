@@ -8,12 +8,35 @@ use Illuminate\Support\Facades\DB;
 
 class ContactsController extends Controller
 {
-    public function blockContact(string $id) {
+    public function saveContact(string $id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $contact = ChatContact::where('user_id', auth()->id())->where('contact_id', $id)->first();
+            if (!$contact) {
+                $contact = ChatContact::create([
+                    'user_id' => auth()->id(),
+                    'contact_id' => $id,
+                    'is_contact_saved' => true
+                ]);
+            }
+            DB::commit();
+
+            $this->ok($contact);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return $this->oops($e->getMessage());
+        }
+    }
+
+    public function blockContact(string $id)
+    {
         DB::beginTransaction();
         try {
             $contact = ChatContact::where('user_id', auth()->id())->where('contact_id', $id)->first();
 
-            if(!$contact) {
+            if (!$contact) {
                 $contact = ChatContact::create([
                     'user_id' => auth()->id(),
                     'contact_id' => $id,
@@ -35,14 +58,14 @@ class ContactsController extends Controller
         }
     }
 
-    public function unblockContact(string $id) {
+    public function unblockContact(string $id)
+    {
         DB::beginTransaction();
         try {
             $contact = ChatContact::where('user_id', auth()->id())->where('contact_id', $id)->first();
 
-            if(!$contact) {
+            if (!$contact) {
                 throw new \Exception("Not found contact");
-                
             } else {
                 $contact->update([
                     'is_contact_saved' => false,
@@ -54,6 +77,30 @@ class ContactsController extends Controller
             return $this->ok($contact);
         } catch (\Exception $e) {
             DB::rollBack();
+            return $this->oops($e->getMessage());
+        }
+    }
+
+    public function destroy(string $id)
+    {
+        DB::beginTransaction();
+        try {
+            $contact = ChatContact::where('user_id', auth()->id())
+                ->where('contact_id', $id)
+                ->first();
+
+            if (!$contact) {
+                throw new \Exception('Contact not found');
+            }
+
+            $contact->delete();
+
+            DB::commit();
+
+            return $this->ok(code: 204);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
             return $this->oops($e->getMessage());
         }
     }
