@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/contacts', [ChatsController::class, 'index'])->name('contacts.index');
     Route::post('/contacts/{id}/block', [ContactsController::class, 'blockContact'])->name('contacts.block');
     Route::post('/contacts/{id}/unblock', [ContactsController::class, 'unblockContact'])->name('contacts.unblock');
+    Route::post('/contacts/{id}/save', [ContactsController::class, 'saveContact'])->name('contacts.save');
     Route::get('/archived-chats', [ChatsController::class, 'index'])->name('archived_chats.index');
     
 });

@@ -1,11 +1,13 @@
 import React, { useRef } from 'react'
 import Dropdown, { useDropdownContext } from '../Dropdown'
 import clsx from 'clsx';
-import { BsArchive, BsCheck2, BsThreeDots, BsXLg } from 'react-icons/bs';
+import { BsArchive, BsBan, BsCheck2, BsThreeDots, BsXLg } from 'react-icons/bs';
 import { useAppStore } from '@/store/appStore';
 import { useChatStore } from '@/store/useChatStore';
 import { archiveChat, maskAsRead, maskAsUnread } from '@/Api/chats';
 import { useModalContext } from '@/Contexts/modal-context';
+import { unblockContact } from '@/Api/contact';
+import { useChatMessageStore } from '@/store/chatMessageStore';
 
 export default function ChatListAction({ chat }) {
     return (
@@ -18,9 +20,10 @@ export default function ChatListAction({ chat }) {
 }
 
 const Action = ({ chat }) => {
-    const {chats, setChats, refetchChats} = useChatStore();
+    const { chats, setChats, refetchChats } = useChatStore();
     const { openModal } = useModalContext();
     const { auth } = useAppStore();
+    const { user, setUser } = useChatMessageStore();
     const { open } = useDropdownContext();
     const dropdownRef = useRef(null);
     const dropdownPosition = (dropdownRef.current?.getBoundingClientRect().bottom || 0) < window.innerHeight - 100
@@ -28,7 +31,7 @@ const Action = ({ chat }) => {
     const handleMarkAsRead = () => {
         maskAsRead(chat).then(() => {
             setChats(chats.map((c) => {
-                if(c.id === chat.id) {
+                if (c.id === chat.id) {
                     c.is_read = true
                 }
 
@@ -39,7 +42,7 @@ const Action = ({ chat }) => {
     const handleMarkAsUnread = () => {
         maskAsUnread(chat).then(() => {
             setChats(chats.map((c) => {
-                if(c.id === chat.id) {
+                if (c.id === chat.id) {
                     c.is_read = false
                 }
 
@@ -52,9 +55,36 @@ const Action = ({ chat }) => {
             refetchChats();
         })
     }
+
+    const handleUnblockContact = () => {
+        unblockContact(chat.id).then(() => {
+            setChats(
+                chats.map((c) => {
+                    if (c.id === chat.id) {
+                        c.is_contact_blocked = false;
+                    }
+
+                    return c;
+                })
+            )
+
+            if (user && user.id === chat.id) {
+                setUser({ ...user, is_contact_blocked: false })
+            }
+        })
+    }
+
     const deleteChatConfirmation = () => {
         openModal({
             view: 'DELETE_CHAT_CONFIRMATION',
+            size: 'lg',
+            payload: chat
+        })
+    }
+
+    const blockContactConfirmation = () => {
+        openModal({
+            view: 'BLOCK_CONTACT_CONFIRMATION',
             size: 'lg',
             payload: chat
         })
@@ -98,6 +128,31 @@ const Action = ({ chat }) => {
                         Delete Chat
                     </div>
                 </Dropdown.Button>
+                {auth.id !== chat.id && chat.chat_type === 'chats' && (
+                    <>
+                        <hr className="my-2 border-secondary" />
+
+                        <Dropdown.Button
+                            onClick={
+                                chat.is_contact_blocked
+                                    ? handleUnblockContact
+                                    : blockContactConfirmation
+                            }
+                        >
+                            {chat.is_contact_blocked ? (
+                                <div className="flex items-center gap-2 text-success">
+                                    <BsBan />
+                                    Unblock Contact
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2 text-danger">
+                                    <BsBan />
+                                    Block Contact
+                                </div>
+                            )}
+                        </Dropdown.Button>
+                    </>
+                )}
             </Dropdown.Content>
         </div>
     )

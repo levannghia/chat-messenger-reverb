@@ -23,7 +23,7 @@ class ContactsController extends Controller
             }
             DB::commit();
 
-            $this->ok($contact);
+            return $this->ok($contact);
         } catch (\Exception $e) {
             DB::rollBack();
             return $this->oops($e->getMessage());
