@@ -1,4 +1,5 @@
 import { blockContact, saveContact } from '@/Api/contact';
+import { useModalContext } from '@/Contexts/modal-context';
 import { useAppStore } from '@/store/appStore'
 import { useChatMessageStore } from '@/store/chatMessageStore';
 import { useChatStore } from '@/store/useChatStore';
@@ -9,6 +10,15 @@ export default function SaveOrBlockContent() {
     const { auth } = useAppStore();
     const { chats, setChats } = useChatStore();
     const { user, messages, setUser } = useChatMessageStore();
+    const {openModal} = useModalContext();
+
+    const blockContactConfirmation = () => {
+        openModal({
+            view: 'BLOCK_CONTACT_CONFIRMATION',
+            size: 'lg',
+            payload: user,
+        })
+    }
 
     const handleBlockContact = () => {
         blockContact(user.id).then(() => {
@@ -49,7 +59,7 @@ export default function SaveOrBlockContent() {
             <div className="my-2 flex flex-col items-center justify-between gap-2">
             <p className='text-center'>This contact not saved, would you like to save</p>
             <div className='flex gap-2'>
-                <button className='btn btn-danger flex items-center gap-2 rounded-full' onClick={handleBlockContact}>
+                <button className='btn btn-danger flex items-center gap-2 rounded-full' onClick={blockContactConfirmation}>
                     <BsBan /> Block
                 </button>
                 <button className='btn btn-success flex items-center gap-2 rounded-full' onClick={handleSaveContact}>

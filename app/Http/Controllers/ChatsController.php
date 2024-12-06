@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ArchivedChat;
+use App\Models\ChatContact;
 use App\Models\ChatMessage;
 use App\Models\User;
 use App\Traits\Chat;
@@ -19,9 +20,8 @@ class ChatsController extends Controller
     public function index()
     {
         try {
-            $chats = $this->chats();
             return Inertia::render('Chats/Index', [
-                'chats' => $chats,
+                'chats' => fn () => $this->chats(),
             ]);
         } catch (\Exception $e) {
             return $this->oops($e->getMessage());
@@ -52,7 +52,6 @@ class ChatsController extends Controller
     {
         try {
             $user = User::find($id);
-            $messages = $this->messages($id);
             // dd($chats);
             if (!$user) {
                 throw new \Exception('User or group not found');
@@ -63,9 +62,9 @@ class ChatsController extends Controller
             $user->chat_type = ChatMessage::CHAT_TYPE;
 
             return Inertia::render('Chats/Show', [
-                'chats' => $this->chats(),
-                'user' => $user,
-                'messages' => $messages
+                'chats' => fn () => $this->chats(),
+                'user' => fn () => $user,
+                'messages' => fn () => $this->messages($id)
             ]);
 
         } catch (\Exception $e) {
@@ -103,6 +102,8 @@ class ChatsController extends Controller
                 }
             }
 
+            $blockedUser = ChatContact::where('user_id', $request->to_id)->where('contact_id', auth()->id())->first();
+
             /**
              * @var ChatMessage $chat
              */
@@ -111,7 +112,7 @@ class ChatsController extends Controller
                 'to_id' => $request->to_id,
                 'to_type' => User::class,
                 'body' => $request->body,
-                'deleted_in_id' => null,
+                'deleted_in_id' => $blockedUser?->is_contact_blocked ? json_encode([['id' => $blockedUser->user_id]]) : null,
             ]);
 
             $chat->attachments()->createMany($attachments);

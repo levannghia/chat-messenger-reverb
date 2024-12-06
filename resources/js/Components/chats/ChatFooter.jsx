@@ -1,4 +1,5 @@
 import { saveMessage } from '@/Api/chat-messages';
+import { unblockContact } from '@/Api/contact';
 import { useAppStore } from '@/store/appStore';
 import { useChatMessageStore } from '@/store/chatMessageStore';
 import { useChatStore } from '@/store/useChatStore';
@@ -6,7 +7,7 @@ import clsx from 'clsx'
 import EmojiPicker from 'emoji-picker-react';
 import React, { useEffect, useRef, useState } from 'react'
 import { BiSend } from 'react-icons/bi';
-import { BsEmojiAngry, BsEmojiSmile, BsPlusLg } from 'react-icons/bs'
+import { BsBan, BsEmojiAngry, BsEmojiSmile, BsPlusLg } from 'react-icons/bs'
 
 export default function ChatFooter({
   scrollToBottom,
@@ -16,7 +17,8 @@ export default function ChatFooter({
 }) {
   const { theme, auth } = useAppStore();
   const { refetchChats } = useChatStore();
-  const { user, setMessages, messages } = useChatMessageStore();
+  const { user, setMessages, messages, setUser } = useChatMessageStore();
+  const { setChats, chats } = useChatStore();
   const [message, setMessage] = useState("");
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
   const [textareaHeight, setTextareaHeight] = useState(48);
@@ -25,7 +27,7 @@ export default function ChatFooter({
   const textareaRef = useRef(null);
 
   useEffect(() => {
-    textareaRef.current.focus();
+    textareaRef.current?.focus();
   }, [])
 
   const handleOnChange = (e) => {
@@ -52,7 +54,7 @@ export default function ChatFooter({
     if (onPressBackspace) {
       const target = e.target;
       const lines = target.value.split("\n");
-      console.log(lines);
+      // console.log(lines);
 
       if (target.offsetHeight > 48) {
         if (lines[lines.length - 1] === "") {
@@ -95,6 +97,36 @@ export default function ChatFooter({
         setTimeout(scrollToBottom, 300)
       })
       .finally(() => setProcessing(false));
+  }
+
+  const handleUnblockContact = () => {
+    unblockContact(user.id).then(() => {
+      setChats(
+        chats.map((c) => {
+          if (c.id === user.id) {
+            c.is_contact_blocked = false;
+          }
+
+          return c;
+        }),
+      );
+
+      setUser({ ...user, is_contact_blocked: false });
+    });
+  };
+
+  if (user.is_contact_blocked) {
+    return (
+      <div className="flex flex-col items-center justify-between gap-2 border-t border-secondary py-2">
+        <p className="text-center">Can't send a message to blocked contact</p>
+        <button
+          className="btn btn-success flex items-center gap-2 rounded-full"
+          onClick={handleUnblockContact}
+        >
+          <BsBan /> Unblock
+        </button>
+      </div>
+    );
   }
 
   return (

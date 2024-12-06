@@ -2,6 +2,7 @@ import { useChatMessageStore } from '@/store/chatMessageStore';
 import clsx from 'clsx';
 import React, { useState } from 'react'
 import ProfileInfomation from './ProfileInfomation';
+import Attachments from './Attachments';
 
 export default function SidebarRight() {
     const {showSidebarRight} = useChatMessageStore();
@@ -13,6 +14,7 @@ export default function SidebarRight() {
             )}
         >
             <ProfileInfomation/>
+            <Attachments/>
         </div>
     )
 }
