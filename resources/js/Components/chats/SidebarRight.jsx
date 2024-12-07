@@ -5,7 +5,10 @@ import ProfileInfomation from './ProfileInfomation';
 import Attachments from './Attachments';
 
 export default function SidebarRight() {
-    const {showSidebarRight} = useChatMessageStore();
+    const { showSidebarRight } = useChatMessageStore();
+    const [toggleCustomizeChat, setToggleCustomizeChat] = useState(false);
+    const [toggleShowMedia, setToggleShowMedia] = useState(false);
+
     return (
         <div
             className={clsx(
@@ -13,8 +16,16 @@ export default function SidebarRight() {
                 showSidebarRight ? "flex" : "hidden",
             )}
         >
-            <ProfileInfomation/>
-            <Attachments/>
+            <ProfileInfomation
+                setToggleCustomizeChat={setToggleCustomizeChat}
+                toggleCustomizeChat={toggleCustomizeChat}
+                toggleShowMedia={toggleShowMedia}
+                setToggleShowMedia={setToggleShowMedia}
+            />
+            <Attachments
+                toggleShowMedia={toggleShowMedia}
+                setToggleShowMedia={setToggleShowMedia}
+            />
         </div>
     )
 }
