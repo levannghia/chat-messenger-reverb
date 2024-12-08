@@ -1,5 +1,6 @@
 import Modal from "@/Components/Modal";
 import BlockContactConfirmation from "@/Components/modals/BlockContactConfirmation";
+import CustomizeChat from "@/Components/modals/CustomizeChat";
 import DeleteChatConfirmation from "@/Components/modals/DeleteChatConfirmation";
 import DeleteMessageConfirmation from "@/Components/modals/DeleteMessageConfirmation";
 import Preferences from "@/Components/modals/Preferences";
@@ -80,6 +81,7 @@ export const ModalChildren = () => {
             {view === "DELETE_MESSAGE_CONFIRMATION" && <DeleteMessageConfirmation />}
             {view == "DELETE_CHAT_CONFIRMATION" && <DeleteChatConfirmation/>}
             {view == "BLOCK_CONTACT_CONFIRMATION" && <BlockContactConfirmation/>}
+            {view == "CUSTOMIZE_CHAT" && <CustomizeChat/>}
         </Modal>
     )
 }

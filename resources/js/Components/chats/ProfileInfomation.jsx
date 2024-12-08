@@ -15,6 +15,13 @@ export default function ProfileInfomation({
     const { user, setUser, showSidebarRight, toggleSidebarRight } = useChatMessageStore();
     const { openModal } = useModalContext();
 
+    const customizeChat = () => {
+        openModal({
+            view: 'CUSTOMIZE_CHAT',
+            size: 'sm'
+        })
+    }
+
     return (
         <Transition
             as="div"
@@ -58,7 +65,7 @@ export default function ProfileInfomation({
                 {toggleCustomizeChat && (
                     <button
                         className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-secondary focus:bg-secondary"
-                        onClick={() => { }}
+                        onClick={customizeChat}
                     >
                         <BsRecordCircle
                             className={clsx(!user.message_color && "!text-primary")}
