@@ -3,9 +3,10 @@ import { useChatMessageStore } from '@/store/chatMessageStore';
 import React, { useState } from 'react'
 import Modal from "@/components/modals/Modal";
 import clsx from 'clsx';
+import { customizeChat } from '@/Api/chats';
 
 export default function CustomizeChat() {
-    const { closeModel } = useModalContext();
+    const { closeModal, dispatchOnCanceled } = useModalContext();
     const { user, setUser } = useChatMessageStore();
     const [ selectedColor, setSelectedColor ] = useState(null);
 
@@ -25,17 +26,22 @@ export default function CustomizeChat() {
     ];
 
     const handleOnClose = () => {
-        closeModel()
+        if(dispatchOnCanceled && typeof dispatchOnCanceled === 'function') {
+            dispatchOnCanceled();
+        }
+        closeModal()
     }
 
     const saveMessageColor = () => {
-
+        customizeChat(user, selectedColor).then(() => {
+            closeModal();
+        })
     }
 
     const changeMessageColor = (color) => {
         setSelectedColor(color);
         setUser({...user, message_color: color});
-        console.log(user);
+        // console.log(user);
         
     }
 

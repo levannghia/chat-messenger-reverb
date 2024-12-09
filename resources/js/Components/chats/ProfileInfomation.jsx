@@ -18,7 +18,10 @@ export default function ProfileInfomation({
     const customizeChat = () => {
         openModal({
             view: 'CUSTOMIZE_CHAT',
-            size: 'sm'
+            size: 'sm',
+            payload: {
+                dispatchOnCanceled: () => setUser({...user})
+            }
         })
     }
 
@@ -69,6 +72,7 @@ export default function ProfileInfomation({
                     >
                         <BsRecordCircle
                             className={clsx(!user.message_color && "!text-primary")}
+                            style={{color: user.message_color }}
                         />
                         Change Theme
                     </button>

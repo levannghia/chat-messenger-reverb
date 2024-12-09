@@ -11,6 +11,7 @@ import ChatMessageAttachment from './ChatMessageAttachment';
 export default function ChatMessages() {
     const { auth } = useAppStore();
     const { user, messages, paginate } = useChatMessageStore();
+    console.log(user);
 
     const sortedAndFilteredMessages = messages.sort((a, b) => a.sort_id - b.sort_id)
         .filter((message, index) => {
@@ -64,7 +65,7 @@ export default function ChatMessages() {
                                                     </div>
                                                 )}
 
-                                                <div className="relative flex max-w-xs flex-wrap items-end gap-2 rounded-2xl bg-secondary py-2 pl-2 pr-4 text-sm lg:max-w-md">
+                                                <div className={clsx("relative flex max-w-xs flex-wrap items-end gap-2 rounded-2xl bg-secondary py-2 pl-2 pr-4 text-sm lg:max-w-md")}>
                                                     <p
                                                         dangerouslySetInnerHTML={{ __html: message.body }}
                                                         className="my-auto overflow-auto"

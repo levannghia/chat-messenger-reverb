@@ -69,7 +69,7 @@ class ContactsController extends Controller
             } else {
                 $contact->update([
                     'is_contact_saved' => false,
-                    'is_contact_blocked' => true
+                    'is_contact_blocked' => false
                 ]);
             }
 
