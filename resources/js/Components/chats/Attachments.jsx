@@ -1,7 +1,7 @@
 import { useChatMessageStore } from '@/store/chatMessageStore'
-import { Transition } from '@headlessui/react';
+import { Tab, Transition } from '@headlessui/react';
 import clsx from 'clsx';
-import React from 'react'
+import React, { Fragment } from 'react'
 import { FaArrowLeft } from 'react-icons/fa';
 
 export default function Attachments({ toggleShowMedia, setToggleShowMedia }) {
@@ -30,6 +30,18 @@ export default function Attachments({ toggleShowMedia, setToggleShowMedia }) {
         </button>
         <h5 className="font-medium">Media, files and links</h5>
       </div>
+
+      <Tab.Group>
+        <Tab.List>
+          <Tab as={Fragment}>
+            {({selected}) => (
+              <button>
+                
+              </button>
+            )}
+          </Tab>
+        </Tab.List>
+      </Tab.Group>
     </Transition>
   )
 }
