@@ -39,9 +39,15 @@ export const useChatMessageStore = create((set) => ({
         prev_page_url: "",
     },
     showSidebarRight: false,
+    media: [],
+    links: [],
+    files: [],
     setUser: (value) => set({user: value}),
     setMessages: (value) => set({messages: value}),
     setPaginate: (value) => set({paginate: value}),
+    setMedia: (value) => set({media: value}),
+    setFiles: (value) => set({files: value}),
+    setLinks: (value) => set({links: value}),
     toggleSidebarRight: () => {
         const currentValue = localStorage.getItem("toggle-sidebar-right") === "true";
         localStorage.setItem('toggle-sidebar-right', String(!currentValue));
@@ -53,13 +59,16 @@ export const ChatMessageProvider = ({children}) => {
     const props = usePage().props;
     
     const [isFirstLoading, setIsFirstLoading] = useState(true);
-    const {setUser, setMessages, setPaginate} = useChatMessageStore();
+    const {setUser, setMessages, setPaginate, setMedia, setLinks, setFiles} = useChatMessageStore();
 
     useEffect(() => {
         setIsFirstLoading(false);
         setUser(props.user);
         setMessages(props.messages?.data);
         setPaginate(props.messages);
+        setMedia(props.media);
+        setFiles(props.files);
+        setLinks(props.links);
     }, [])
 
     return <>{children}</>

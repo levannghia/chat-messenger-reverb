@@ -2,7 +2,7 @@ import { useModalContext } from '@/Contexts/modal-context';
 import { useChatMessageStore } from '@/store/chatMessageStore'
 import { Transition } from "@headlessui/react";
 import clsx from 'clsx';
-import React, { Fragment } from 'react'
+import React from 'react'
 import { BsChevronDown, BsChevronRight, BsRecordCircle, BsXLg } from 'react-icons/bs';
 import { FaInfoCircle } from "react-icons/fa";
 
@@ -27,7 +27,6 @@ export default function ProfileInfomation({
 
     return (
         <Transition
-            as="div"
             show={!toggleShowMedia}
             enter="transition-transform duration-300 ease-out"
             enterFrom="transform opacity-0 translate-x-[-100%]"

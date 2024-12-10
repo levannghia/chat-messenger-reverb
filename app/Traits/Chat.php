@@ -3,14 +3,17 @@
 namespace App\Traits;
 
 use App\Models\ChatMessage;
+use App\Models\ChatMessageFile;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 trait Chat
 {
     protected $validImageExtensions = ["jpg", "jpeg", "png", "gif", "svg", "bmp", "webp"];
+    protected $linkPattern = "/(https?:\/\/[^\s]+)/";
 
     public function chats()
     {
@@ -133,5 +136,49 @@ trait Chat
             ->setPath(route('chats.messages', $id));
 
         return $chats;
+    }
+
+    public function media(string $id, $type = 'media')
+    {
+        $chatIds = ChatMessage::forUserOrGroup($id)->deletedInIds()->pluck('id')->toArray();
+        $files = ChatMessageFile::with('sent_by')->whereIn('chat_id', $chatIds)->where('file_type', $type)->get();
+
+        return $files;
+    }
+
+    public function files(string $id)
+    {
+        return $this->media($id, 'file');
+    }
+
+    public function links(string $id)
+    {
+        $chats = ChatMessage::forUserOrGroup($id)->deletedInIds()->whereNotNull('body')->select('body as links');
+        $links = [];
+
+        foreach ($chats->pluck('links') as $key => $link) {
+            $result = preg_match_all($this->linkPattern, $link, $matches);
+
+            if ($result > 0) {
+                $links[] = $matches[0];
+            }
+        }
+
+        $chats = $chats->when(
+            count($links) > 0,
+            function (Builder $query) use ($links) {
+                $query->where(function (Builder $query) use ($links) {
+                    foreach (Arr::flatten($links) as $link) {
+                        $query->orWhere('body', 'LIKE', "%$link%");
+                    }
+                });
+            },
+            function (Builder $query) use ($links) {
+                $query->WhereIn('body', $links);
+            }
+        )
+            ->orderByDesc('sort_id')
+            ->get();
+
     }
 }
