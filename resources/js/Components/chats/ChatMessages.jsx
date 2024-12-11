@@ -11,7 +11,6 @@ import ChatMessageAttachment from './ChatMessageAttachment';
 export default function ChatMessages() {
     const { auth } = useAppStore();
     const { user, messages, paginate } = useChatMessageStore();
-    console.log(user);
 
     const sortedAndFilteredMessages = messages.sort((a, b) => a.sort_id - b.sort_id)
         .filter((message, index) => {

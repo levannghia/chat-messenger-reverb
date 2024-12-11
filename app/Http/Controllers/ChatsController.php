@@ -62,7 +62,7 @@ class ChatsController extends Controller
             $user->is_contact_blocked = auth()->user()->is_contact_blocked($id);
             $user->message_color = auth()->user()->message_color($id);
             $user->chat_type = ChatMessage::CHAT_TYPE;
-
+         
             return Inertia::render('Chats/Show', [
                 'chats' => fn () => $this->chats(),
                 'user' => fn () => $user,

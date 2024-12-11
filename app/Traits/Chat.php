@@ -153,32 +153,57 @@ trait Chat
 
     public function links(string $id)
     {
-        $chats = ChatMessage::forUserOrGroup($id)->deletedInIds()->whereNotNull('body')->select('body as links');
-        $links = [];
+        // $chats = ChatMessage::forUserOrGroup($id)->deletedInIds()->whereNotNull('body')->select('body as links');
+        // $links = [];
 
-        foreach ($chats->pluck('links') as $key => $link) {
+        // foreach ($chats->pluck('links') as $key => $link) {
+        //     $result = preg_match_all($this->linkPattern, $link, $matches);
+
+        //     if ($result > 0) {
+        //         $links[] = $matches[0];
+        //     }
+        // }
+
+        // $chats = $chats->when(
+        //     count($links) > 0,
+        //     function (Builder $query) use ($links) {
+        //         $query->where(function (Builder $query) use ($links) {
+        //             foreach (Arr::flatten($links) as $link) {
+        //                 $query->orWhere('body', 'LIKE', "%$link%");
+        //             }
+        //         });
+        //     },
+        //     function (Builder $query) use ($links) {
+        //         $query->WhereIn('body', $links);
+        //     }
+        // )
+        //     ->orderByDesc('sort_id')
+        //     ->get();
+
+        // foreach ($chats->pluck('links') as $key => $link) {
+        //     $result = preg_match_all($this->linkPattern, $link, $matches);
+
+        //     if($result > 0) {
+        //         $chats[$key] = $matches[0];
+        //     }
+        // }
+
+        // return $chats->flatten();
+
+        $chats = ChatMessage::forUserOrGroup($id)
+            ->deletedInIds()
+            ->whereRaw("body REGEXP 'https?:\/\/[^\\s]+'")
+            ->orderByDesc('sort_id')
+            ->pluck('body');
+
+        foreach ($chats as $key => $link) {
             $result = preg_match_all($this->linkPattern, $link, $matches);
 
             if ($result > 0) {
-                $links[] = $matches[0];
+                $chats[$key] = $matches[0];
             }
         }
 
-        $chats = $chats->when(
-            count($links) > 0,
-            function (Builder $query) use ($links) {
-                $query->where(function (Builder $query) use ($links) {
-                    foreach (Arr::flatten($links) as $link) {
-                        $query->orWhere('body', 'LIKE', "%$link%");
-                    }
-                });
-            },
-            function (Builder $query) use ($links) {
-                $query->WhereIn('body', $links);
-            }
-        )
-            ->orderByDesc('sort_id')
-            ->get();
-
+        return $chats->flatten();
     }
 }
