@@ -21,3 +21,15 @@ export const deleteMessage = (message) => {
 export const deleteFileInChat = (message, attachment) => {
     return window.axios.delete(route('chats.delete_file', [message.id, attachment.file_name]));
 }
+
+export const fetchMedia = (user) => {
+    return window.axios.get(route("chats.media", user.id));
+}
+
+export const fetchFiles = (user) => {
+    return window.axios.get(route("chats.files", user.id));
+}
+
+export const fetchLinks = (user) => {
+    return window.axios.get(route("chats.links", user.id));
+}

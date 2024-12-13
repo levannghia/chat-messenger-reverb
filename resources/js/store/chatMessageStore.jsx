@@ -1,8 +1,9 @@
+import { fetchFiles, fetchMedia } from "@/Api/chat-messages";
 import { usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
 
-export const useChatMessageStore = create((set) => ({
+export const useChatMessageStore = create((set, get) => ({
     user: {
         id: "",
         name: "",
@@ -43,26 +44,35 @@ export const useChatMessageStore = create((set) => ({
     links: [],
     files: [],
     selectedMedia: undefined,
-    setUser: (value) => set({user: value}),
-    setMessages: (value) => set({messages: value}),
-    setPaginate: (value) => set({paginate: value}),
-    setSelectedMedia: (value) => set({selectedMedia: value}),
-    clearSelectedMedia: () => set({selectedMedia: undefined}),
-    setMedia: (value) => set({media: value}),
-    setFiles: (value) => set({files: value}),
-    setLinks: (value) => set({links: value}),
+    setUser: (value) => set({ user: value }),
+    setMessages: (value) => set({ messages: value }),
+    setPaginate: (value) => set({ paginate: value }),
+    setSelectedMedia: (value) => set({ selectedMedia: value }),
+    clearSelectedMedia: () => set({ selectedMedia: undefined }),
+    setMedia: (value) => set({ media: value }),
+    setFiles: (value) => set({ files: value }),
+    setLinks: (value) => set({ links: value }),
+    reloadMedia: () => {
+        fetchMedia(get().user).then((response) => set({media: response.data.data}));
+    },
+    reloadFiles: () => {
+        fetchFiles(get().user).then((response) => set({files: response.data.data}));
+    },
+    reloadLinks: () => {
+        fetchLinks(get().user).then((response) => set({links: response.data.data}));
+    },
     toggleSidebarRight: () => {
         const currentValue = localStorage.getItem("toggle-sidebar-right") === "true";
         localStorage.setItem('toggle-sidebar-right', String(!currentValue));
-        set({showSidebarRight: !currentValue});
+        set({ showSidebarRight: !currentValue });
     }
 }))
 
-export const ChatMessageProvider = ({children}) => {
+export const ChatMessageProvider = ({ children }) => {
     const props = usePage().props;
-    
+
     const [isFirstLoading, setIsFirstLoading] = useState(true);
-    const {setUser, setMessages, setPaginate, setMedia, setLinks, setFiles} = useChatMessageStore();
+    const { setUser, setMessages, setPaginate, setMedia, setLinks, setFiles } = useChatMessageStore();
 
     useEffect(() => {
         setIsFirstLoading(false);

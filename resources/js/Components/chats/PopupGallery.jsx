@@ -1,7 +1,7 @@
 import { useChatMessageStore } from '@/store/chatMessageStore';
 import { Dialog, Transition } from '@headlessui/react';
 import moment from 'moment';
-import React, { Fragment, useRef, useState } from 'react'
+import React, { Fragment, useEffect, useRef, useState } from 'react'
 import { BsXLg } from 'react-icons/bs';
 import { FaCircleNotch } from 'react-icons/fa';
 import ReactImageGallery from 'react-image-gallery';

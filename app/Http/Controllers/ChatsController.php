@@ -358,4 +358,37 @@ class ChatsController extends Controller
             return $this->oops($e->getMessage());
         }
     }
+
+    public function loadMedia(string $id) 
+    {
+        try {
+            $media = $this->media($id);
+
+            return $this->ok($media);
+        } catch (\Exception $e) {
+            return $this->oops($e->getMessage());
+        }
+    }
+
+    public function loadFiles(string $id) 
+    {
+        try {
+            $files = $this->files($id);
+
+            return $this->ok($files);
+        } catch (\Exception $e) {
+            return $this->oops($e->getMessage());
+        }
+    }
+
+    public function loadLinks(string $id) 
+    {
+        try {
+            $links = $this->links($id);
+
+            return $this->ok($links);
+        } catch (\Exception $e) {
+            return $this->oops($e->getMessage());
+        }
+    }
 }

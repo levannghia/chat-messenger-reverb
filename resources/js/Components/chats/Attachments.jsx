@@ -8,8 +8,13 @@ import { FaArrowLeft } from 'react-icons/fa';
 
 export default function Attachments({ toggleShowMedia, setToggleShowMedia }) {
   const { showSidebarRight, media, links, files, setSelectedMedia } = useChatMessageStore();
+
   const downloadFile = (url) => {
     window.open(url);
+  };
+
+  const openPopupGallery = (image) => {
+    setSelectedMedia(image);
   };
 
   return (
@@ -84,6 +89,7 @@ export default function Attachments({ toggleShowMedia, setToggleShowMedia }) {
                     <div
                       key={image.file_name}
                       className="flex h-24 cursor-pointer items-center justify-center overflow-hidden rounded-lg bg-secondary"
+                      onClick={() => openPopupGallery(image)}
                     >
                       <img
                         src={`${image.file_path}/${image.file_name}`}
