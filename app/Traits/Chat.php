@@ -84,6 +84,8 @@ trait Chat
                         $attachment = '<div class="flex items-center gap-1">' . $from . ChatMessage::SVG_FILE_ATTACHMENT . ' File</div>';
                     }
                 }
+
+
                 $mapped = new \stdClass;
                 $seenInId = collect(json_decode($chat->seen_in_id));
                 $mapped->id = $chat->another_user->id;
@@ -135,7 +137,15 @@ trait Chat
             ->paginate(25)
             ->setPath(route('chats.messages', $id));
 
-        return $chats;
+        foreach ($chats as $key => $chat) {
+            $result = preg_match_all($this->linkPattern, $chat->body, $matches);
+            if ($result > 0) {
+                $chat->links = $matches[0];
+            } else {
+                $chat->links = [];
+            }
+            return $chat[$key] = $chat;
+        }
     }
 
     public function media(string $id, $type = 'media')

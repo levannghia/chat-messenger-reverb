@@ -35,9 +35,9 @@ Route::middleware('auth')->group(function () {
     Route::post('chats/{id}/customize', [ChatsController::class, 'customizeChat'])->name('chats.customize_chat');
     Route::post('/chats/{id}/archive', [ChatsController::class, 'archiveChat'])->name('chats.archive');
     Route::post('/chats/{id}/unarchive', [ChatsController::class, 'unarchiveChat'])->name('chats.unarchive');
-    Route::get('/chats/{id}/media', [ChatsController::class, 'fetchMedia'])->name('chats.media');
-    Route::get('/chats/{id}/files', [ChatsController::class, 'fetchFiles'])->name('chats.files');
-    Route::get('/chats/{id}/links', [ChatsController::class, 'fetchLinks'])->name('chats.links');
+    Route::get('/chats/{id}/media', [ChatsController::class, 'loadMedia'])->name('chats.media');
+    Route::get('/chats/{id}/files', [ChatsController::class, 'loadFiles'])->name('chats.files');
+    Route::get('/chats/{id}/links', [ChatsController::class, 'loadLinks'])->name('chats.links');
     Route::get('/contacts', [ChatsController::class, 'index'])->name('contacts.index');
     Route::post('/contacts/{id}/block', [ContactsController::class, 'blockContact'])->name('contacts.block');
     Route::post('/contacts/{id}/unblock', [ContactsController::class, 'unblockContact'])->name('contacts.unblock');

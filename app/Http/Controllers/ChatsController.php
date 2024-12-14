@@ -116,12 +116,19 @@ class ChatsController extends Controller
                 'from_id' => auth()->id(),
                 'to_id' => $request->to_id,
                 'to_type' => User::class,
-                'body' => $request->body,
+                'body' => $request->filled($request->body) ? markdown_template(htmlspecialchars($request->body)) : null,
                 'deleted_in_id' => $blockedUser?->is_contact_blocked ? json_encode([['id' => $blockedUser->user_id]]) : null,
             ]);
 
+            $links = [];
+            $result = preg_match_all($this->linkPattern, $chat->body, $matches);
+            if ($result > 0) {
+                $links[] = $matches[0];
+            }
+
             $chat->attachments()->createMany($attachments);
             $chat->attachments = $chat->attachments;
+            $chat->links = $links;
 
             DB::commit();
             return $this->ok(data: $chat, code: 201);

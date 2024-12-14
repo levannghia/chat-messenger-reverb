@@ -1,4 +1,4 @@
-import { fetchFiles, fetchMedia } from "@/Api/chat-messages";
+import { fetchFiles, fetchLinks, fetchMedia } from "@/Api/chat-messages";
 import { usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { create } from "zustand";

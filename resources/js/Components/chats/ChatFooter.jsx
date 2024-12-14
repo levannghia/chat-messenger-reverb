@@ -3,6 +3,7 @@ import { unblockContact } from '@/Api/contact';
 import { useAppStore } from '@/store/appStore';
 import { useChatMessageStore } from '@/store/chatMessageStore';
 import { useChatStore } from '@/store/useChatStore';
+import { existingFiles, existingLinks, existingMedia } from '@/utils';
 import clsx from 'clsx'
 import EmojiPicker from 'emoji-picker-react';
 import React, { useEffect, useRef, useState } from 'react'
@@ -17,7 +18,7 @@ export default function ChatFooter({
 }) {
   const { theme, auth } = useAppStore();
   const { refetchChats } = useChatStore();
-  const { user, setMessages, messages, setUser } = useChatMessageStore();
+  const { user, setMessages, messages, setUser, reloadMedia, reloadFiles, reloadLinks } = useChatMessageStore();
   const { setChats, chats } = useChatStore();
   const [message, setMessage] = useState("");
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
@@ -93,6 +94,9 @@ export default function ChatFooter({
         const data = response.data.data;
         setMessages([...messages, data]);
         refetchChats();
+        existingMedia(data.attachments) && reloadMedia(user);
+        existingFiles(data.attachments) && reloadFiles(user);
+        existingLinks(data.links) && reloadLinks(user);
 
         setTimeout(scrollToBottom, 300)
       })

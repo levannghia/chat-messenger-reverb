@@ -4,12 +4,13 @@ import { useModalContext } from '@/Contexts/modal-context'
 import { useChatStore } from '@/store/useChatStore';
 import { deleteMessage } from '@/Api/chat-messages';
 import { useChatMessageStore } from '@/store/chatMessageStore';
+import { existingFiles, existingLinks, existingMedia } from '@/utils';
 
 export default function DeleteMessageConfirmation() {
     const { closeModal, data: message } = useModalContext();
     const { chats, setChats } = useChatStore();
     const { refetchChats } = useChatStore();
-    const { messages, setMessages } = useChatMessageStore();
+    const { messages, setMessages, reloadMedia, reloadFiles, reloadLinks, user } = useChatMessageStore(); 
 
     if (!message) return
 
@@ -17,6 +18,10 @@ export default function DeleteMessageConfirmation() {
         deleteMessage(message).then(() => {
             refetchChats();
             setMessages([...messages.filter((m) => m.id !== message.id)]);
+
+            existingMedia(messages.attachments) && reloadMedia(user);
+            existingFiles(messages.attachments) && reloadFiles(user);
+            existingLinks(messages.links) && reloadLinks(user);
 
             closeModal();
         })

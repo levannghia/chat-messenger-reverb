@@ -31,3 +31,20 @@ if(!function_exists('remove_file')) {
         return false;
     }
 }
+
+if (!function_exists('markdown_template')) {
+    /**
+     *
+     * @param string $text
+     * @return string
+     */
+    function markdown_template($text)
+    {
+        $text = preg_replace("/\n/", "<br>", $text);
+        $text = preg_replace("/\*(.*?)\*/", "<b>$1</b>", $text);
+        $text = preg_replace("/__(.*?)__/", "<em>$1</em>", $text);
+        $text = preg_replace("/~(.*?)~/", "<del>$1</del>", $text);
+
+        return $text;
+    }
+}

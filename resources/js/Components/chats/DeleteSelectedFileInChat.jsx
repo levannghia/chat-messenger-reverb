@@ -1,10 +1,11 @@
 import { deleteFileInChat } from '@/Api/chat-messages';
 import { useChatMessageStore } from '@/store/chatMessageStore';
+import { existingMedia } from '@/utils';
 import React from 'react'
 import { BsX } from 'react-icons/bs';
 
 export default function DeleteSelectedFileInChat({ message, attachment }) {
-    const {messages, setMessages} = useChatMessageStore();
+    const {messages, setMessages, reloadMedia, reloadFiles, user} = useChatMessageStore();
     
     const deleteSelectedFile = () => {
         deleteFileInChat(message, attachment).then(() => {
@@ -17,6 +18,9 @@ export default function DeleteSelectedFileInChat({ message, attachment }) {
 
                 return m
             }))
+
+            existingMedia(message.attachments) && reloadMedia(user);
+            existingFiles(message.attachments) && reloadFiles(user);
         })
 
     }

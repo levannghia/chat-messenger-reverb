@@ -47,3 +47,15 @@ export const formatFileSize = (size = 0) => {
     return (size / (1024 * 1024 * 1024)).toFixed(2) + " GB";
   }
 }
+
+export const existingMedia = (attachment) => {
+  return attachment.some((attachment) => isImageLinkValid(attachment.original_name));
+}
+
+export const existingFiles = (attachment) => {
+  return attachment.some((attachment) => !isImageLinkValid(attachment.original_name));
+}
+
+export const existingLinks = (links = []) => {
+  return links && links.length > 0;
+}
