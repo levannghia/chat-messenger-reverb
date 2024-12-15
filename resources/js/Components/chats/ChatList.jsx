@@ -1,20 +1,35 @@
 import { Link, usePage } from '@inertiajs/react'
 import clsx from 'clsx';
-import React from 'react'
+import React, { useEffect } from 'react'
 import BadgeOnline from './BadgeOnline';
 import { relativeTime } from '@/utils';
 import { useChatStore } from '@/store/useChatStore';
 import { useChatContext } from '@/Contexts/chat-context';
 import BadgeNotification from './BadgeNotification';
-import { maskAsRead } from '@/Api/chats';
+import { fetchChatsInPaginate, maskAsRead } from '@/Api/chats';
 import ChatListAction from './ChatListAction';
+import { useInView } from "react-intersection-observer";
+import { BsArrowClockwise } from 'react-icons/bs';
 
 export default function ChatList({ search, href, className }) {
-    const { chats } = useChatStore();
+    const { chats, setChats, setPaginate, paginate } = useChatStore();
+    const { ref:loadMoreRef, inView, entry } = useInView();
 
     const handleMarkAsRead = (chat) => {
         !chat.is_read && maskAsRead(chat)
     }
+
+    useEffect(() => {
+        if(inView && loadMoreRef.length > 0) {
+            if(paginate.next_page_url){
+                fetchChatsInPaginate(paginate.next_page_url).then((response) => {
+                    setPaginate(response.data.data);
+                    setChats([...chats, ...response.data.data.data]);
+                })
+            }
+        }
+        
+    }, [inView, paginate])
 
     if (chats.length === 0) return;
 
@@ -22,7 +37,7 @@ export default function ChatList({ search, href, className }) {
         <div className='relative max-h-[calc(100vh_-_158px)] flex-1 overflow-y-auto px-2 sm:max-h-max sm: pb-2'>
             {chats.sort((a, b) => {
                 if (search.length === 0) {
-                    return b.created_at.localeCompare(a.created_at);
+                    return b.created_at?.localeCompare(a.created_at);
                 }
 
                 return a.name.localeCompare(b.name);
@@ -84,6 +99,11 @@ export default function ChatList({ search, href, className }) {
                         {!chat.is_read && <BadgeNotification />}
                     </div>
                 ))}
+                {paginate.next_page_url && (
+                    <button className='mx-auto mt-4 flex' ref={loadMoreRef}>
+                        <BsArrowClockwise className='animate-spin text-2xl text-secondary-foreground'/>
+                    </button>
+                )}
         </div>
     )
 }

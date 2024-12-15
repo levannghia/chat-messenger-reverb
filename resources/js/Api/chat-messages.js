@@ -14,6 +14,10 @@ export const saveMessage = (user, message, attachments = []) => {
     )
 }
 
+export const fetchMessagesInPaginate = (url) => {
+    return window.axios.get(url);
+}
+
 export const deleteMessage = (message) => {
     return window.axios.delete(route("chats.destroy", message.id));
 }

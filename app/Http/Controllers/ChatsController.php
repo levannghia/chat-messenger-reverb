@@ -62,7 +62,7 @@ class ChatsController extends Controller
             $user->is_contact_blocked = auth()->user()->is_contact_blocked($id);
             $user->message_color = auth()->user()->message_color($id);
             $user->chat_type = ChatMessage::CHAT_TYPE;
-         
+
             return Inertia::render('Chats/Show', [
                 'chats' => fn () => $this->chats(),
                 'user' => fn () => $user,
@@ -116,7 +116,7 @@ class ChatsController extends Controller
                 'from_id' => auth()->id(),
                 'to_id' => $request->to_id,
                 'to_type' => User::class,
-                'body' => $request->filled($request->body) ? markdown_template(htmlspecialchars($request->body)) : null,
+                'body' => $request->filled('body') ? markdown_template(htmlspecialchars($request->body)) : null,
                 'deleted_in_id' => $blockedUser?->is_contact_blocked ? json_encode([['id' => $blockedUser->user_id]]) : null,
             ]);
 

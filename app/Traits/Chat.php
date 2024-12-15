@@ -144,8 +144,10 @@ trait Chat
             } else {
                 $chat->links = [];
             }
-            return $chat[$key] = $chat;
+
+            $chats[$key] = $chat;
         }
+        return $chats;
     }
 
     public function media(string $id, $type = 'media')
