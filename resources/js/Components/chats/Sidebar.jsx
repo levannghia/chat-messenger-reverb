@@ -12,7 +12,7 @@ export default function Sidebar() {
   const {openModal} = useModalContext();
   const addNewGroup = () => {
     openModal({
-      view: 'PREFERENCES',
+      view: 'ADD_NEW_GROUP',
       size: 'lg'
     })
   }

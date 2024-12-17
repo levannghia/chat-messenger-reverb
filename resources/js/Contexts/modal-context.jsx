@@ -1,4 +1,5 @@
 import Modal from "@/Components/Modal";
+import AddNewGroup from "@/Components/modals/AddNewGroup";
 import BlockContactConfirmation from "@/Components/modals/BlockContactConfirmation";
 import CustomizeChat from "@/Components/modals/CustomizeChat";
 import DeleteChatConfirmation from "@/Components/modals/DeleteChatConfirmation";
@@ -82,6 +83,7 @@ export const ModalChildren = () => {
             {view == "DELETE_CHAT_CONFIRMATION" && <DeleteChatConfirmation/>}
             {view == "BLOCK_CONTACT_CONFIRMATION" && <BlockContactConfirmation/>}
             {view == "CUSTOMIZE_CHAT" && <CustomizeChat/>}
+            {view == "ADD_NEW_GROUP" && <AddNewGroup/>}
         </Modal>
     )
 }
