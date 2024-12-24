@@ -8,11 +8,15 @@ import { useChatStore } from '@/store/useChatStore';
 import { BsCamera } from 'react-icons/bs';
 import InputError from '../InputError';
 import { useForm } from '@inertiajs/react';
+import TextArea from '../TextArea';
+import InputLabel from '../InputLabel';
+import TextInput from '../TextInput';
+import ComboboxComponent from '../ComboboxComponent';
 
 export default function AddNewGroup() {
   const { closeModal } = useModalContext();
   const avatarRef = useRef(null);
-  const {data, post, setData, errors, processing, recentlySuccessful} = useForm({
+  const { data, post, setData, errors, processing, recentlySuccessful } = useForm({
     _method: 'POST',
     name: "",
     description: "",
@@ -29,7 +33,7 @@ export default function AddNewGroup() {
   const changeAvatar = (e) => {
     const files = e.target.files;
 
-    if(files && files.length > 0) {
+    if (files && files.length > 0) {
       setData('avatar', files[0]);
       const imageUrl = window.URL.createObjectURL(files[0]);
       avatarRef.current?.setAttribute("src", imageUrl)
@@ -38,7 +42,11 @@ export default function AddNewGroup() {
         window.URL.revokeObjectURL(imageUrl)
       }
     }
-    
+
+  }
+
+  const addMembers = (value) => {
+    setData('group_members', value)
   }
 
   return (
@@ -46,7 +54,7 @@ export default function AddNewGroup() {
       <Modal>
         <Modal.Header title="New Group" onClose={closeModal} />
         <Modal.Body as={Fragment}>
-        <div className="picture relative">
+          <div className="picture relative">
             <img
               src="/images/group-avatar.png"
               alt="group-avatar.png"
@@ -62,13 +70,49 @@ export default function AddNewGroup() {
               <BsCamera />
               <input
                 type="file"
-            
+
                 id="avatar"
                 className="hidden"
               />
             </label>
 
             <InputError className="mt-2 text-center" message={errors.avatar} />
+          </div>
+          <div className="space-y-2">
+            <InputLabel htmlFor="name" value="Subject" />
+
+            <TextInput
+              id="name"
+              type="text"
+              className="mt-1 block w-full"
+              value={data.name}
+              onChange={(e) => setData("name", e.target.value)}
+            />
+
+            <InputError className="mt-2" message={errors.name} />
+          </div>
+          <div className="space-y-2">
+            <InputLabel htmlFor="description" value="Description" />
+
+            <TextArea
+              id="description"
+              className="mt-1 block w-full"
+              value={data.description}
+              onChange={(e) => setData("description", e.target.value)}
+            />
+
+            <InputError className="mt-2" message={errors.description} />
+          </div>
+          <div className='space-y-2'>
+            <InputLabel htmlFor="group_members" value="Add Members" />
+            <ComboboxComponent
+              url={route('users.index')}
+              onChange={addMembers}
+              initialSelected={[]}
+              refId="group_members"
+            />
+
+            <InputError className="mt-2" message={errors.group_members} />
           </div>
         </Modal.Body>
 

@@ -8,6 +8,15 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+    public function index() {
+        try {
+            $users = User::whereNot('id', auth()->id())->where('name', 'LIKE', '%' . request('query') . '%')->select(['id', 'name'])->get();
+            return $this->ok($users);
+        } catch (\Exception $e) {
+            return $this->oops($e->getMessage());
+        }
+    }
+
     public function update(Request $request, string $id) {
         DB::beginTransaction();
         try {

@@ -20,7 +20,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::patch('users/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::patch('/users/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/chats', fn () => "")->name('chats.index');
     Route::get('/chats', [ChatsController::class, 'index'])->name('chats.index');
     Route::get('/chats/users', [ChatsController::class, 'loadChats'])->name('chats.users');
