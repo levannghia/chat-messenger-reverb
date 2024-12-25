@@ -3,7 +3,6 @@ import Modal from '@/Components/modals/Modal';
 import { useModalContext } from '@/Contexts/modal-context';
 import { useAppStore } from '@/store/appStore';
 import { useChatMessageStore } from '@/store/chatMessageStore';
-import { blockContact } from '@/Api/contact';
 import { useChatStore } from '@/store/useChatStore';
 import { BsCamera } from 'react-icons/bs';
 import InputError from '../InputError';
@@ -26,8 +25,13 @@ export default function AddNewGroup() {
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
+    if(processing) return
 
-    post(route('profile.update'));
+    post(route('profile.update'), {
+      onSuccess: (response) => {
+        closeModal();
+      }
+    });
   }
 
   const changeAvatar = (e) => {
@@ -70,7 +74,7 @@ export default function AddNewGroup() {
               <BsCamera />
               <input
                 type="file"
-
+                onChange={changeAvatar}
                 id="avatar"
                 className="hidden"
               />
