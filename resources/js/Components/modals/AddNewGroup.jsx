@@ -27,7 +27,7 @@ export default function AddNewGroup() {
     e.preventDefault();
     if(processing) return
 
-    post(route('profile.update'), {
+    post(route('group.store'), {
       onSuccess: (response) => {
         closeModal();
       }

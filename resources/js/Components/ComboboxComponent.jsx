@@ -4,14 +4,6 @@ import { BsCheck, BsChevronExpand, BsX } from "react-icons/bs";
 import clsx from 'clsx';
 import { useDebounce } from '@/hooks/use-debounce';
 
-const people = [
-    { id: 1, name: 'Durward Reynolds' },
-    { id: 2, name: 'Kenton Towne' },
-    { id: 3, name: 'Therese Wunsch' },
-    { id: 4, name: 'Benedict Kessler' },
-    { id: 5, name: 'Katelyn Rohan' },
-]
-
 export default function ComboboxComponent({ url, onChange: updateData, initialSelected, disabled, refId }) {
     const [query, setQuery] = useState('')
     const [people, setPeople] = useState([])

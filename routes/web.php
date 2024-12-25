@@ -3,6 +3,7 @@
 use App\Http\Controllers\ChatsController;
 use App\Http\Controllers\CheckTotalCompany;
 use App\Http\Controllers\ContactsController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -44,6 +45,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/contacts/{id}/unblock', [ContactsController::class, 'unblockContact'])->name('contacts.unblock');
     Route::post('/contacts/{id}/save', [ContactsController::class, 'saveContact'])->name('contacts.save');
     Route::get('/archived-chats', [ChatsController::class, 'index'])->name('archived_chats.index');
+
+    Route::post('/group', [GroupController::class, 'store'])->name('group.store');
     
 });
 
