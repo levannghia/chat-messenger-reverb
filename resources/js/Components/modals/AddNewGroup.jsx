@@ -124,8 +124,8 @@ export default function AddNewGroup() {
           <button className="btn btn-secondary flex-1" onClick={closeModal}>
             Cancel
           </button>
-          <button className="btn btn-danger flex-1">
-            Block
+          <button className="btn btn-primary flex-1">
+            Save
           </button>
         </Modal.Footer>
       </Modal>

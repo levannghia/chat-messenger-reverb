@@ -2,8 +2,10 @@
 
 namespace App\Traits;
 
+use App\Models\ChatGroup;
 use App\Models\ChatMessage;
 use App\Models\ChatMessageFile;
+use App\Models\GroupMember;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
@@ -17,8 +19,22 @@ trait Chat
 
     public function chats()
     {
+        $group = GroupMember::where('member_id', auth()->id())
+            ->select(['member_id', 'group_id'])
+            ->groupBy('member_id', 'group_id');
+
         if (request()->filled('query')) {
-            $chats = User::where('name', 'LIKE', '%' . request('query') . '%')
+            $chatGroup = ChatGroup::joinSub($group, 'g', function (JoinClause $join) {
+                $join->on('chat_group.id', 'g.group_id');
+            })
+                ->where('name', 'LIKE', '%' . request('query') . '%')
+                ->select(['id', 'name', 'avatar', 'member_id']);
+
+            $chats = User::leftJoin($chatGroup, 'cg', function (JoinClause $join) {
+                $join->on('chat_group.id', 'g.group_id');
+            })
+                ->where('name', 'LIKE', '%' . request('query') . '%')
+                ->orWhere('cg.name', 'LIKE', '%' . request('query') . '%')
                 ->selectRaw('
                 id,
                 name,
