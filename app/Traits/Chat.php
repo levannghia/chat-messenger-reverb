@@ -36,15 +36,15 @@ trait Chat
                 ->where('name', 'LIKE', '%' . request('query') . '%')
                 ->orWhere('cg.name', 'LIKE', '%' . request('query') . '%')
                 ->selectRaw('
-                id,
-                name,
-                avatar,
+                IFNULL (cg.id, users.id) as id,
+                IFNULL (cg.name, users.name) as name,
+                IFNULL (cg.avatar, users.avatar) as avatar,
                 NULL as message_id,
                 NULL as body,
                 1 as is_read,
                 0 as is_reply,
-                IF(is_online = 1 AND active_status = 1, 1, 0) as is_online,
-                active_status,
+                IF(cg.id IS NULL AND users.is_online = 1 AND active_status = 1, 1, 0) as is_online,
+                IF(cg.id IS NULL, active_status, 0) as active_status,
                 NULL as created_at,
                 ? as chat_type
             ', [ChatMessage::CHAT_TYPE])
