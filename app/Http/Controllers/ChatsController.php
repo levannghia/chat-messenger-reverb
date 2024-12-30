@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ArchivedChat;
 use App\Models\ChatContact;
+use App\Models\ChatGroup;
 use App\Models\ChatMessage;
 use App\Models\ChatMessageColor;
 use App\Models\User;
@@ -53,15 +54,24 @@ class ChatsController extends Controller
     {
         try {
             $user = User::find($id);
-            // dd($chats);
-            if (!$user) {
+            $group = ChatGroup::find($id);
+            
+            if (!$user && !$group) {
                 throw new \Exception('User or group not found');
             }
 
-            $user->is_contact_saved = auth()->user()->is_contact_saved($id);
-            $user->is_contact_blocked = auth()->user()->is_contact_blocked($id);
+            if($user) {
+                $user->is_contact_saved = auth()->user()->is_contact_saved($id);
+                $user->is_contact_blocked = auth()->user()->is_contact_blocked($id);
+                $user->chat_type = ChatMessage::CHAT_TYPE;
+            } else {
+                $user = $group;
+                $user->creator = $group->creator;
+                $user->chat_type = ChatMessage::CHAT_GROUP_TYPE;
+                $user->members_count = $group->group_members->count();
+            }
+
             $user->message_color = auth()->user()->message_color($id);
-            $user->chat_type = ChatMessage::CHAT_TYPE;
 
             return Inertia::render('Chats/Show', [
                 'chats' => fn () => $this->chats(),
