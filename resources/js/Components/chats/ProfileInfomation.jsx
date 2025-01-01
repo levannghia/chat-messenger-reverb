@@ -20,8 +20,16 @@ export default function ProfileInfomation({
             view: 'CUSTOMIZE_CHAT',
             size: 'sm',
             payload: {
-                dispatchOnCanceled: () => setUser({...user})
+                dispatchOnCanceled: () => setUser({ ...user })
             }
+        })
+    }
+
+    const editGroup = () => {
+        openModal({
+            view: 'EDIT_GROUP',
+            size: 'sm',
+            payload: user
         })
     }
 
@@ -55,6 +63,21 @@ export default function ProfileInfomation({
                 />
 
                 <h5 className="font-medium">{user.name}</h5>
+                {user.chat_type === 'group_chats' && (
+                    <div>
+                        <div className='text-sm text-secondary-foreground'>
+                            Group . {user.members_count} member
+                        </div>
+                        <div className='text-sm text-secondary-foreground'>
+                            {user.description}
+                        </div>
+                        <button className='btn btn-secondary btn-close rounded-full text-base focus:ring-0'
+                            onClick={editGroup}
+                        >
+                            <FaInfoCircle className={clsx(!user.message_color && '!text-primary')} style={{color: user.message_color}}/>
+                        </button>
+                    </div>
+                )}
             </div>
             <div className='px-2'>
                 <button
@@ -71,7 +94,7 @@ export default function ProfileInfomation({
                     >
                         <BsRecordCircle
                             className={clsx(!user.message_color && "!text-primary")}
-                            style={{color: user.message_color }}
+                            style={{ color: user.message_color }}
                         />
                         Change Theme
                     </button>

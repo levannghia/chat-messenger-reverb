@@ -4,6 +4,7 @@ import BlockContactConfirmation from "@/Components/modals/BlockContactConfirmati
 import CustomizeChat from "@/Components/modals/CustomizeChat";
 import DeleteChatConfirmation from "@/Components/modals/DeleteChatConfirmation";
 import DeleteMessageConfirmation from "@/Components/modals/DeleteMessageConfirmation";
+import EditGroup from "@/Components/modals/EditGroup";
 import Preferences from "@/Components/modals/Preferences";
 import { createContext, useContext, useReducer } from 'react';
 
@@ -84,6 +85,7 @@ export const ModalChildren = () => {
             {view == "BLOCK_CONTACT_CONFIRMATION" && <BlockContactConfirmation/>}
             {view == "CUSTOMIZE_CHAT" && <CustomizeChat/>}
             {view == "ADD_NEW_GROUP" && <AddNewGroup/>}
+            {view == "EDIT_GROUP" && <EditGroup/>}
         </Modal>
     )
 }
