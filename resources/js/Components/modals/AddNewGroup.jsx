@@ -1,9 +1,6 @@
 import React, { Fragment, useRef, useState } from 'react'
 import Modal from '@/Components/modals/Modal';
 import { useModalContext } from '@/Contexts/modal-context';
-import { useAppStore } from '@/store/appStore';
-import { useChatMessageStore } from '@/store/chatMessageStore';
-import { useChatStore } from '@/store/useChatStore';
 import { BsCamera } from 'react-icons/bs';
 import InputError from '../InputError';
 import { useForm } from '@inertiajs/react';
