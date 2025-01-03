@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import Dropdown, { useDropdownContext } from '../Dropdown'
 import clsx from 'clsx';
-import { BsArchive, BsBan, BsCheck2, BsThreeDots, BsXLg } from 'react-icons/bs';
+import { BsArchive, BsBan, BsBoxArrowRight, BsCheck2, BsThreeDots, BsXLg } from 'react-icons/bs';
 import { useAppStore } from '@/store/appStore';
 import { useChatStore } from '@/store/useChatStore';
 import { archiveChat, maskAsRead, maskAsUnread } from '@/Api/chats';
@@ -90,6 +90,14 @@ const Action = ({ chat }) => {
         })
     }
 
+    const exitGroupConfirmation = () => {
+        openModal({
+            view: "EXIT_GROUP_CONFIRMATION",
+            size: "lg",
+            payload: chat,
+        });
+    };
+
     return (
         <div ref={dropdownRef}>
             <Dropdown.Trigger>
@@ -150,6 +158,18 @@ const Action = ({ chat }) => {
                                     Block Contact
                                 </div>
                             )}
+                        </Dropdown.Button>
+                    </>
+                )}
+
+                {auth.id !== chat.id && chat.chat_type === 'group_chats' && (
+                    <>
+                        <hr className="my-2 border-secondary" />
+                        <Dropdown.Button onClick={exitGroupConfirmation}>
+                            <div className="flex items-center gap-2 text-danger">
+                                <BsBoxArrowRight />
+                                Exit Group
+                            </div>
                         </Dropdown.Button>
                     </>
                 )}

@@ -1,14 +1,14 @@
-import React, { Fragment, use, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { Combobox, Transition } from '@headlessui/react'
 import { BsCheck, BsChevronExpand, BsX } from "react-icons/bs";
 import clsx from 'clsx';
 import { useDebounce } from '@/hooks/use-debounce';
 
 export default function ComboboxComponent({ url, onChange: updateData, initialSelected, disabled, refId }) {
-    const [query, setQuery] = useState('')
-    const [people, setPeople] = useState([])
-    const [debouncedQuery] = useDebounce(query, 300)
-    const [selectedPerson, setSelectedPerson] = useState(initialSelected)
+    const [query, setQuery] = useState('');
+    const [people, setPeople] = useState([]);
+    const [debouncedQuery] = useDebounce(query, 300);
+    const [selectedPerson, setSelectedPerson] = useState(initialSelected);
 
     useEffect(() => {
         if (query.length === 0) {
@@ -125,8 +125,6 @@ export default function ComboboxComponent({ url, onChange: updateData, initialSe
 
                 </Combobox.Options>
             </Transition>
-
-
         </Combobox>
     )
 }

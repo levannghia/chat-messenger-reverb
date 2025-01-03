@@ -7,7 +7,7 @@ import { useForm } from '@inertiajs/react';
 import TextArea from '../TextArea';
 import InputLabel from '../InputLabel';
 import TextInput from '../TextInput';
-import ComboboxComponent from '../ComboboxComponent';
+import ComboboxComponent from '@/Components/ComboboxComponent';
 
 export default function AddNewGroup() {
   const { closeModal } = useModalContext();

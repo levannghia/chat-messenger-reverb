@@ -5,6 +5,7 @@ import CustomizeChat from "@/Components/modals/CustomizeChat";
 import DeleteChatConfirmation from "@/Components/modals/DeleteChatConfirmation";
 import DeleteMessageConfirmation from "@/Components/modals/DeleteMessageConfirmation";
 import EditGroup from "@/Components/modals/EditGroup";
+import ExitGroupConfirmation from "@/Components/modals/ExitGroupConfirmation";
 import Preferences from "@/Components/modals/Preferences";
 import { createContext, useContext, useReducer } from 'react';
 
@@ -86,6 +87,7 @@ export const ModalChildren = () => {
             {view == "CUSTOMIZE_CHAT" && <CustomizeChat/>}
             {view == "ADD_NEW_GROUP" && <AddNewGroup/>}
             {view == "EDIT_GROUP" && <EditGroup/>}
+            {view == "EXIT_GROUP_CONFIRMATION" && <ExitGroupConfirmation/>}
         </Modal>
     )
 }
