@@ -20,7 +20,7 @@ trait Chat
     public function chats()
     {
         $group = GroupMember::where('member_id', auth()->id())
-            ->select(['member_id', 'group_id'])
+            ->select('member_id', 'group_id')
             ->groupBy('member_id', 'group_id');
 
         if (request()->filled('query')) {
@@ -79,6 +79,7 @@ trait Chat
             foreach ($chats as $key => $chat) {
                 $from = $chat->from_id === auth()->id() ? 'You: ' : '';
                 $attachment = '';
+
                 if (!$chat->body && $chat->attachments) {
                     $fileName = $chat->attachments->first()?->original_name;
                     if (in_array(pathinfo($fileName, PATHINFO_EXTENSION), $this->validImageExtensions)) {
@@ -87,7 +88,6 @@ trait Chat
                         $attachment = '<div class="flex items-center gap-1">' . $from . ChatMessage::SVG_FILE_ATTACHMENT . ' File</div>';
                     }
                 }
-
 
                 $mapped = new \stdClass;
                 $seenInId = collect(json_decode($chat->seen_in_id));
@@ -115,13 +115,19 @@ trait Chat
                     $mapped->is_contact_blocked = false;
                     $mapped->chat_type = ChatMessage::CHAT_GROUP_TYPE;
                     $mapped->created_at = $chat->created_at;
-                    $mapped->body = $chat->body ? $from . Str::limit(strip_tags($chat->body), 100) : $attachment;
+                    if (str_contains($chat->body, 'created group "'. $chat->to->name .'"') && $chat->to->creator_id !== auth()->id()) {
+                        $mapped->body = 'You: invited by ' . $chat->to?->creator?->name;
+                    } else {
+                        $mapped->body = $chat->body
+                        ? $from . Str::limit(strip_tags($chat->body), 100)
+                        : $attachment;
+                    }
                 }
                 
-
                 $chats[$key] = $mapped;
             }
         }
+        
         return $chats;
     }
 
