@@ -125,7 +125,7 @@ class ChatsController extends Controller
             $chat = ChatMessage::create([
                 'from_id' => auth()->id(),
                 'to_id' => $request->to_id,
-                'to_type' => User::class,
+                'to_type' => User::find($request->to_id) ? User::class : ChatGroup::class,
                 'body' => $request->filled('body') ? markdown_template(htmlspecialchars($request->body)) : null,
                 'deleted_in_id' => $blockedUser?->is_contact_blocked ? json_encode([['id' => $blockedUser->user_id]]) : null,
             ]);
