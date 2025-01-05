@@ -280,7 +280,7 @@ class ChatsController extends Controller
 
             ArchivedChat::create([
                 'from_id' => $id,
-                'from_type' => User::class,
+                'from_type' => User::find($id) ? User::class : ChatGroup::class,
                 'archived_by' => auth()->id(),
             ]);
 
@@ -363,7 +363,7 @@ class ChatsController extends Controller
                 ChatMessageColor::create([
                     'from_id' => auth()->id(),
                     'to_id' => $id,
-                    'to_type' => User::class,
+                    'to_type' => User::find($id) ? User::class : ChatGroup::class,
                     'message_color' => $request->message_color
                 ]);
             } else {

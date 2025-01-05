@@ -22,7 +22,6 @@ export default function ChatMessages() {
         })
         .filter((message) => message.body || message.attachments?.length > 0)
 
-        const showProfile = true;
 
     return (
         <div className="relative flex flex-1 flex-col gap-[3px] overflow-x-hidden">
@@ -37,6 +36,8 @@ export default function ChatMessages() {
                 // console.log("date", date);
                 // console.log("prevDate", prevDate);
                 // console.log("isDifferentDate", isDifferentDate);
+                const showProfile = (message.chat_type === 'group_chats' && messages[index]?.from_id !== message.from_id) ||
+                    (message.chat_type === 'group_chats' && index === 0);
                 return (
                     <Fragment key={`message-${message.id}`}>
                         {(isFirstMessage || isDifferentDate) && (
@@ -45,7 +46,7 @@ export default function ChatMessages() {
                             </p>
                         )}
 
-                        {(message.from_id === user.id && message.from_id !== auth.id) || (message.chat_type === 'group_chat' && message.from_id !== auth.id) ? (    
+                        {(message.from_id === user.id && message.from_id !== auth.id) || (message.chat_type === 'group_chats' && message.from_id !== auth.id) ? (
                             <div className="flex flex-row justify-start">
                                 <div className="text-sm text-foreground">
                                     {message.body && (

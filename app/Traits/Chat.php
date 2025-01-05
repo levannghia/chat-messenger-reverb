@@ -66,9 +66,10 @@ trait Chat
                     $join->on('ac.from_id', 'lm.another_user_id')
                         ->where('ac.archived_by', auth()->id());
                 })
-                ->when(request()->filled('archived_chats'), 
-                    fn ($query) => $query->whereNotNull('ac.id'),
-                    fn ($query) => $query->whereNull('ac.id')
+                ->when(
+                    request()->filled('archived_chats'),
+                    fn($query) => $query->whereNotNull('ac.id'),
+                    fn($query) => $query->whereNull('ac.id')
                 )
                 ->select('chat_messages.*', 'lm.another_user_id')
                 ->orderByDesc('sort_id')
@@ -92,7 +93,7 @@ trait Chat
                 $mapped = new \stdClass;
                 $seenInId = collect(json_decode($chat->seen_in_id));
 
-                if($chat->to instanceof User) {
+                if ($chat->to instanceof User) {
                     $mapped->id = $chat->another_user->id;
                     $mapped->name = $chat->another_user->name . ($chat->another_user->id === auth()->id() ? ' (You)' : '');
                     $mapped->avatar = $chat->another_user->avatar;
@@ -115,19 +116,19 @@ trait Chat
                     $mapped->is_contact_blocked = false;
                     $mapped->chat_type = ChatMessage::CHAT_GROUP_TYPE;
                     $mapped->created_at = $chat->created_at;
-                    if (str_contains($chat->body, 'created group "'. $chat->to->name .'"') && $chat->to->creator_id !== auth()->id()) {
+                    if (str_contains($chat->body, 'created group "' . $chat->to->name . '"') && $chat->to->creator_id !== auth()->id()) {
                         $mapped->body = 'You: invited by ' . $chat->to?->creator?->name;
                     } else {
                         $mapped->body = $chat->body
-                        ? $from . Str::limit(strip_tags($chat->body), 100)
-                        : $attachment;
+                            ? $from . Str::limit(strip_tags($chat->body), 100)
+                            : $attachment;
                     }
                 }
-                
+
                 $chats[$key] = $mapped;
             }
         }
-        
+
         return $chats;
     }
 
@@ -140,12 +141,6 @@ trait Chat
         ])
             ->forUserOrGroup($id)
             ->deletedInIds()
-            ->where(function (Builder $query) use ($id) {
-                $query->where('from_id', auth()->id())->where('to_id', $id);
-            })
-            ->orWhere(function (Builder $query) use ($id) {
-                $query->where('from_id', $id)->where('to_id', auth()->id());
-            })
             ->selectRaw(
                 'id,
                 from_id,
@@ -244,25 +239,26 @@ trait Chat
         return $chats->flatten();
     }
 
-    public function latestMessageForEachChat($group) {
-        $latestMessage = ChatMessage::leftJoinSub($group, 'g', function(JoinClause $join) {
+    public function latestMessageForEachChat($group)
+    {
+        $latestMessage = ChatMessage::leftJoinSub($group, 'g', function (JoinClause $join) {
             $join->on('chat_messages.to_id', 'g.group_id');
         })
-        ->where(function (Builder $query) use ($group) {
-            $query->where(function(Builder $query) {
-                $query->where('from_id', auth()->id())
-                ->whereNot('to_id', auth()->id());
+            ->where(function (Builder $query) use ($group) {
+                $query->where(function (Builder $query) {
+                    $query->where('from_id', auth()->id())
+                        ->whereNot('to_id', auth()->id());
+                })
+                    ->orWhere(function (Builder $query) {
+                        $query->where('to_id', auth()->id())
+                            ->whereNot('from_id', auth()->id());
+                    })
+                    ->orWhere(function (Builder $query) {
+                        $query->where('to_id', auth()->id())
+                            ->where('from_id', auth()->id());
+                    })
+                    ->orWhereIn('to_id', $group->pluck('group_id')->toArray());
             })
-            ->orWhere(function(Builder $query) {
-                $query->where('to_id', auth()->id())
-                ->whereNot('from_id', auth()->id());
-            })
-            ->orWhere(function(Builder $query) {
-                $query->where('to_id', auth()->id())
-                ->where('from_id', auth()->id());
-            })
-            ->orWhereIn('to_id', $group->pluck('group_id')->toArray()); 
-        })
             ->deletedInIds()
             ->selectRaw("
             MAX(sort_id) as sort_id,
@@ -273,7 +269,7 @@ trait Chat
             END as another_user_id 
             ")
             ->groupBy('another_user_id');
-        
-            return $latestMessage;
+
+        return $latestMessage;
     }
 }

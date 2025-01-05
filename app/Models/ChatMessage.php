@@ -28,19 +28,23 @@ class ChatMessage extends Model
             <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1M4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1z"/>
         </svg>';
 
-    public function from () {
+    public function from()
+    {
         return $this->belongsTo(User::class, 'from_id');
     }
 
-    public function to(): MorphTo {
+    public function to(): MorphTo
+    {
         return $this->morphTo();
     }
 
-    public function another_user() {
+    public function another_user()
+    {
         return $this->belongsTo(User::class, 'another_user_id');
     }
 
-    public function attachments() {
+    public function attachments()
+    {
         return $this->hasMany(ChatMessageFile::class, 'chat_id');
     }
 
@@ -48,7 +52,7 @@ class ChatMessage extends Model
     {
         parent::boot();
 
-        static::addGlobalScope('default_sort', function(Builder $builder) {
+        static::addGlobalScope('default_sort', function (Builder $builder) {
             $builder->orderBy('sort_id');
         });
 
@@ -63,23 +67,37 @@ class ChatMessage extends Model
         });
     }
 
-    public function scopeForUserOrGroup(Builder $query, string $id) {
-        $query->where(function(Builder $query) use ($id) {
-            $query->where('from_id', auth()->id())->where('to_id', $id);
-        })->orWhere(function(Builder $query) use ($id) {
-            $query->where('from_id', $id)->where('to_id', auth()->id());
-        });
+    public function scopeForUserOrGroup(Builder $query, string $id)
+    {
+        $group = GroupMember::where('member_id', auth()->id())
+            ->select('member_id', 'group_id')
+            ->groupBy('member_id', 'group_id');
+
+        $query->where(function (Builder $query) use ($id) {
+            $query->where('from_id', auth()->id())
+                ->where('to_id', $id);
+        })
+            ->orWhere(function (Builder $query) use ($id) {
+                $query->where('from_id', $id)
+                    ->where('to_id', auth()->id());
+            })
+            ->orWhere(function (Builder $query) use ($id, $group) {
+                $query->where('to_type', ChatGroup::class)
+                    ->where('to_id', $id)
+                    ->whereIn('to_id', $group->pluck('group_id')?->toArray());
+            });
     }
 
-    public function scopeDeletedInIds(Builder $query) 
+    public function scopeDeletedInIds(Builder $query)
     {
         $query->where(function (Builder $query) {
             $query->whereNull('deleted_in_id')
-                  ->orWhereRaw("JSON_SEARCH(deleted_in_id, 'ONE', ?, NULL, '$[*].id') IS NULL", auth()->id()); //search json trong sql
+                ->orWhereRaw("JSON_SEARCH(deleted_in_id, 'ONE', ?, NULL, '$[*].id') IS NULL", auth()->id()); //search json trong sql
         });
     }
 
-    public function scopeNotSeen(Builder $query) {
+    public function scopeNotSeen(Builder $query)
+    {
         $query->whereRaw("JSON_SEARCH(seen_in_id, 'ONE', ?, NULL, '$[*].id') IS NULL", auth()->id());
     }
 }
