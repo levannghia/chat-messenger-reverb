@@ -354,7 +354,7 @@ class ChatsController extends Controller
     }
 
     public function customizeChat(string $id, Request $request) {
-        DB::beginTransaction();
+        DB::beginTransaction(); //sâsas
 
         try {
             $chat = ChatMessageColor::where('from_id', auth()->id())->where('to_id', $id)->first();
