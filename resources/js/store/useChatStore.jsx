@@ -43,6 +43,11 @@ export const ChatProvider = ({ children }) => {
         setIsFirstLoading(false);
         setChats(props.chats.data);
         setPaginate(props.chats);
+
+        window.Echo.channel(`send-message-${props.auth.id}`).listen(
+            '.send-message',
+            refetchChats(),
+        )
     }, [])
 
     return <>{children}</>

@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Models\ChatContact;
 use App\Models\ChatGroup;
 use App\Models\ChatMessage;
 use App\Models\ChatMessageFile;
@@ -25,15 +26,22 @@ trait Chat
 
         if (request()->filled('query')) {
             $chatGroup = ChatGroup::joinSub($group, 'g', function (JoinClause $join) {
-                $join->on('chat_group.id', 'g.group_id');
+                $join->on('chat_groups.id', 'g.group_id');
             })
                 ->where('name', 'LIKE', '%' . request('query') . '%')
                 ->select(['id', 'name', 'avatar', 'member_id']);
 
-            $chats = User::leftJoin($chatGroup, 'cg', function (JoinClause $join) {
-                $join->on('chat_group.id', 'g.group_id');
+            $contacts = ChatContact::where('user_id', auth()->id())
+                ->select('contact_id', 'is_contact_blocked')
+                ->groupBy('contact_id', 'is_contact_blocked');
+
+            $chats = User::leftJoinSub($chatGroup, 'cg', function (JoinClause $join) {
+                $join->on('cg.member_id', 'users.id')  ;
             })
-                ->where('name', 'LIKE', '%' . request('query') . '%')
+                ->leftJoinSub($contacts, 'c', function (JoinClause $join) {
+                    $join->on('c.contact_id', 'users.id');
+                })
+                ->where('users.name', 'LIKE', '%' . request('query') . '%')
                 ->orWhere('cg.name', 'LIKE', '%' . request('query') . '%')
                 ->selectRaw('
                 IFNULL (cg.id, users.id) as id,
@@ -43,8 +51,8 @@ trait Chat
                 NULL as body,
                 1 as is_read,
                 0 as is_reply,
-                IF(cg.id IS NULL AND users.is_online = 1 AND active_status = 1, 1, 0) as is_online,
-                IF(cg.id IS NULL, active_status, 0) as active_status,
+                IF (cg.id IS NULL AND users.is_online = 1 AND users.active_status = 1, 1, 0) as is_online,
+                IF (cg.id IS NULL, active_status, 0) as active_status,
                 NULL as created_at,
                 ? as chat_type
             ', [ChatMessage::CHAT_TYPE])

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SendMessage;
 use App\Http\Requests\GroupRequest;
 use App\Models\ChatGroup;
 use App\Models\ChatMessage;
 use App\Models\GroupMember;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -34,12 +36,20 @@ class GroupController extends Controller
             $groupMembers = collect([auth()->id(), ...$request->group_members])
                             ->map(fn ($member_id) => compact('member_id'));
             $group->group_members()->createMany($groupMembers);
+
             $chat = ChatMessage::create([
                 'from_id' => auth()->id(),
                 'body' => 'Create Group ' . $group->name,
                 'to_id' => $group->id,
                 'to_type' => ChatGroup::class,
             ]);
+
+            $from = auth()->user();
+            $toMembers = User::whereIn('id', $request->group_members)->get();
+            
+            foreach ($toMembers as $to) {
+                event(new SendMessage($from, $to, $chat));
+            }
 
             DB::commit();
             return to_route('chats.show', $group->id);

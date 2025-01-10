@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Events\UserActivity as EventsUserActivity;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,6 +39,7 @@ class UserActivity
 
             if(!Cache::has($key)) {
                 Cache::put($key, true, $expiresAt);
+                event(new EventsUserActivity(Auth::user()));
             } else {
                 Cache::put($key, true, $expiresAt);
             }
