@@ -1,4 +1,5 @@
 import { fetchChats } from "@/Api/chats";
+import { existingFiles, existingLinks, existingMedia } from "@/utils";
 import { usePage } from "@inertiajs/react";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -39,14 +40,26 @@ export const ChatProvider = ({ children }) => {
     const [isFirstLoading, setIsFirstLoading] = useState(true);
     const { chats, paginate, setChats, setPaginate, refetchChats } = useChatStore();
 
+    const syncAll = (data) => {
+        refetchChats();
+        // existingFiles();
+        // existingMedia();
+        // existingLinks();
+        console.log(data);
+    }
+
     useEffect(() => {
         setIsFirstLoading(false);
         setChats(props.chats.data);
         setPaginate(props.chats);
 
+        window.Echo.channel(`user-activity`).listen('.user-activity', (data) => {
+            console.log(data);
+        })
+
         window.Echo.channel(`send-message-${props.auth.id}`).listen(
             '.send-message',
-            refetchChats(),
+            syncAll(),
         )
     }, [])
 
