@@ -47,7 +47,7 @@ export const ChatProvider = ({ children }) => {
 
         window.Echo.channel(`user-activity`).listen('.user-activity', (data) => {
             console.log(data);
-            if(Array.isArray(data.user)) {
+            if (Array.isArray(data.user)) {
                 refetchChats();
             } else {
                 const chatsList = chats.length > 0 ? chats : chats?.data;
@@ -57,10 +57,15 @@ export const ChatProvider = ({ children }) => {
             }
         })
 
-        window.Echo.channel(`send-message-${props.auth.id}`).listen(
-            '.send-message',
-            refetchChats,
-        )
+        try {
+            window.Echo.channel(`send-message-${props.auth.id}`)
+                .listen(".send-message", (data) => {
+                    console.log("Received message:", data);
+                    refetchChats();
+                });
+        } catch (error) {
+            console.error(`Error in listening to send-message-${props.auth.id} channel:`, error);
+        }
 
     }, [])
 

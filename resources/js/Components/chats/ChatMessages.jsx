@@ -2,7 +2,7 @@ import { useAppStore } from '@/store/appStore'
 import { useChatMessageStore } from '@/store/chatMessageStore';
 import clsx from 'clsx';
 import moment from 'moment';
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import DeleteMessage from './DeleteMessage';
 import { formatFileSize, isImageLinkValid } from '@/utils';
 import { BsFileEarmark, BsFileEarmarkText } from 'react-icons/bs';
@@ -21,7 +21,6 @@ export default function ChatMessages() {
             return true;
         })
         .filter((message) => message.body || message.attachments?.length > 0)
-
 
     return (
         <div className="relative flex flex-1 flex-col gap-[3px] overflow-x-hidden">
