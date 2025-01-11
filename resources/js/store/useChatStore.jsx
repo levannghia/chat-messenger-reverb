@@ -40,14 +40,6 @@ export const ChatProvider = ({ children }) => {
     const [isFirstLoading, setIsFirstLoading] = useState(true);
     const { chats, paginate, setChats, setPaginate, refetchChats } = useChatStore();
 
-    const syncAll = (data) => {
-        refetchChats();
-        // existingFiles();
-        // existingMedia();
-        // existingLinks();
-        console.log(data);
-    }
-
     useEffect(() => {
         setIsFirstLoading(false);
         setChats(props.chats.data);
@@ -59,8 +51,9 @@ export const ChatProvider = ({ children }) => {
 
         window.Echo.channel(`send-message-${props.auth.id}`).listen(
             '.send-message',
-            syncAll(),
+            refetchChats,
         )
+        
     }, [])
 
     return <>{children}</>

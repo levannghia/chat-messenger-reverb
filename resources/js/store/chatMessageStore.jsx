@@ -1,4 +1,5 @@
-import { fetchFiles, fetchLinks, fetchMedia } from "@/Api/chat-messages";
+import { fetchFiles, fetchLinks, fetchMedia, fetchMessage } from "@/Api/chat-messages";
+import { existingFiles, existingLinks, existingMedia } from "@/utils";
 import { usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
@@ -53,26 +54,51 @@ export const useChatMessageStore = create((set, get) => ({
     setFiles: (value) => set({ files: value }),
     setLinks: (value) => set({ links: value }),
     reloadMedia: () => {
-        fetchMedia(get().user).then((response) => set({media: response.data.data}));
+        fetchMedia(get().user).then((response) => set({ media: response.data.data }));
     },
     reloadFiles: () => {
-        fetchFiles(get().user).then((response) => set({files: response.data.data}));
+        fetchFiles(get().user).then((response) => set({ files: response.data.data }));
     },
     reloadLinks: () => {
-        fetchLinks(get().user).then((response) => set({links: response.data.data}));
+        fetchLinks(get().user).then((response) => set({ links: response.data.data }));
     },
     toggleSidebarRight: () => {
         const currentValue = localStorage.getItem("toggle-sidebar-right") === "true";
         localStorage.setItem('toggle-sidebar-right', String(!currentValue));
         set({ showSidebarRight: !currentValue });
+    },
+    refetchMessages: () => {
+        const props = usePage().props;
+        fetchMessage(props.user).then((response) => {
+            set({ paginate: response.data.data });
+            set({ messages: response.data.data.data });
+        })
     }
 }))
 
 export const ChatMessageProvider = ({ children }) => {
     const props = usePage().props;
-
     const [isFirstLoading, setIsFirstLoading] = useState(true);
-    const { setUser, setMessages, setPaginate, setMedia, setLinks, setFiles } = useChatMessageStore();
+    const {
+        setUser,
+        setMessages,
+        setPaginate,
+        setMedia,
+        setLinks,
+        setFiles,
+        refetchMessages,
+        reloadMedia,
+        reloadFiles,
+        reloadLinks
+    } = useChatMessageStore();
+
+    const syncAll = (data) => {
+        refetchMessages();
+
+        existingMedia(data.chat.attachments) && reloadMedia(props.user);
+        existingFiles(data.chat.attachments) && reloadFiles(props.user);
+        existingLinks(data.chat.links) && reloadLinks(props.user);
+    }
 
     useEffect(() => {
         setIsFirstLoading(false);
@@ -82,7 +108,10 @@ export const ChatMessageProvider = ({ children }) => {
         setMedia(props.media);
         setFiles(props.files);
         setLinks(props.links);
-    }, [])
+
+        window.Echo.channel(`send-message-${props.user.id}-to-${props.auth.id}`)
+            .listen('.send-message', syncAll);
+    }, []);
 
     return <>{children}</>
 }
