@@ -47,13 +47,21 @@ export const ChatProvider = ({ children }) => {
 
         window.Echo.channel(`user-activity`).listen('.user-activity', (data) => {
             console.log(data);
+            if(Array.isArray(data.user)) {
+                refetchChats();
+            } else {
+                const chatsList = chats.length > 0 ? chats : chats?.data;
+                const existingChat = chatsList.find((chat) => chat.id === data.user?.id);
+
+                existingChat && refetchChats();
+            }
         })
 
         window.Echo.channel(`send-message-${props.auth.id}`).listen(
             '.send-message',
             refetchChats,
         )
-        
+
     }, [])
 
     return <>{children}</>
