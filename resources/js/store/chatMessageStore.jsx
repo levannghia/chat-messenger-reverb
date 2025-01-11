@@ -70,6 +70,8 @@ export const useChatMessageStore = create((set, get) => ({
     refetchMessages: () => {
         const props = usePage().props;
         fetchMessage(props.user).then((response) => {
+            console.log(response);
+
             set({ paginate: response.data.data });
             set({ messages: response.data.data.data });
         })
@@ -94,6 +96,7 @@ export const ChatMessageProvider = ({ children }) => {
 
     const syncAll = (data) => {
         refetchMessages();
+        console.log("123456");
 
         existingMedia(data.chat.attachments) && reloadMedia(props.user);
         existingFiles(data.chat.attachments) && reloadFiles(props.user);
@@ -109,8 +112,23 @@ export const ChatMessageProvider = ({ children }) => {
         setFiles(props.files);
         setLinks(props.links);
 
-        window.Echo.channel(`send-message-${props.user.id}-to-${props.auth.id}`)
-            .listen('.send-message', syncAll);
+        // Check if Laravel Echo is properly configured and working
+        if (window.Echo) {
+            window.Echo.channel(`send-message-${props.user.id}-to-${props.auth.id}`)
+                .listen('.send-message', (data) => {
+                    console.log(data);
+                    console.log("error");
+                })
+                .error((error) => {
+                    console.error('Echo error:', error);
+                });
+
+            window.Echo.channel(`send-message-group-${props.user.id}`)
+                .listen('.send-group-message', syncAll);
+
+        } else {
+            console.error("Laravel Echo is not properly configured or not working.");
+        }
     }, []);
 
     return <>{children}</>
