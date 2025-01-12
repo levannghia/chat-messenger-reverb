@@ -15,7 +15,7 @@ export const saveMessage = (user, message, attachments = []) => {
 }
 
 export const fetchMessage = (user) => {
-    return window.axios.get(route("chats.messsages", user.id))
+    return window.axios.get(route("chats.messages", user.id))
 }
 
 export const fetchMessagesInPaginate = (url) => {

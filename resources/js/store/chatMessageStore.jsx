@@ -67,15 +67,6 @@ export const useChatMessageStore = create((set, get) => ({
         localStorage.setItem('toggle-sidebar-right', String(!currentValue));
         set({ showSidebarRight: !currentValue });
     },
-    refetchMessages: () => {
-        const props = usePage().props;
-        fetchMessage(props.user).then((response) => {
-            console.log(response);
-
-            set({ paginate: response.data.data });
-            set({ messages: response.data.data.data });
-        })
-    }
 }))
 
 export const ChatMessageProvider = ({ children }) => {
@@ -88,15 +79,21 @@ export const ChatMessageProvider = ({ children }) => {
         setMedia,
         setLinks,
         setFiles,
-        refetchMessages,
         reloadMedia,
         reloadFiles,
         reloadLinks
     } = useChatMessageStore();
 
+    const refetchMessages = () => {
+        fetchMessage(props.user).then((response) => {
+            setPaginate(response.data.data);
+            setMessages(response.data.data.data);
+        })
+    }
+
     const syncAll = (data) => {
         refetchMessages();
-        console.log("123456");
+        console.log("data: ", data);
 
         existingMedia(data.chat.attachments) && reloadMedia(props.user);
         existingFiles(data.chat.attachments) && reloadFiles(props.user);
@@ -115,15 +112,12 @@ export const ChatMessageProvider = ({ children }) => {
         // Check if Laravel Echo is properly configured and working
         if (window.Echo) {
             window.Echo.channel(`send-message-${props.user.id}-to-${props.auth.id}`)
-                .listen('.send-message', (data) => {
-                    console.log(data);
-                    console.log("error");
-                })
+                .listen('.send-message', syncAll)
                 .error((error) => {
                     console.error('Echo error:', error);
                 });
 
-            window.Echo.channel(`send-message-group-${props.user.id}`)
+            window.Echo.channel(`send-group-message-${props.user.id}`)
                 .listen('.send-group-message', syncAll);
 
         } else {

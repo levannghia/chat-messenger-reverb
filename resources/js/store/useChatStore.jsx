@@ -50,9 +50,8 @@ export const ChatProvider = ({ children }) => {
             if (Array.isArray(data.user)) {
                 refetchChats();
             } else {
-                const chatsList = chats.length > 0 ? chats : chats?.data;
+                const chatsList = chats.length > 0 ? chats : props.chats?.data;
                 const existingChat = chatsList.find((chat) => chat.id === data.user?.id);
-
                 existingChat && refetchChats();
             }
         })
@@ -60,7 +59,6 @@ export const ChatProvider = ({ children }) => {
         try {
             window.Echo.channel(`send-message-${props.auth.id}`)
                 .listen(".send-message", (data) => {
-                    console.log("Received message:", data);
                     refetchChats();
                 });
         } catch (error) {
