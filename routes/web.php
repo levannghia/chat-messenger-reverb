@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chats/{id}/media', [ChatsController::class, 'loadMedia'])->name('chats.media');
     Route::get('/chats/{id}/files', [ChatsController::class, 'loadFiles'])->name('chats.files');
     Route::get('/chats/{id}/links', [ChatsController::class, 'loadLinks'])->name('chats.links');
-    Route::get('/contacts', [ChatsController::class, 'index'])->name('contacts.index');
+    Route::get('/contacts', [ContactsController::class, 'index'])->name('contacts.index');
     Route::post('/contacts/{id}/block', [ContactsController::class, 'blockContact'])->name('contacts.block');
     Route::post('/contacts/{id}/unblock', [ContactsController::class, 'unblockContact'])->name('contacts.unblock');
     Route::post('/contacts/{id}/save', [ContactsController::class, 'saveContact'])->name('contacts.save');

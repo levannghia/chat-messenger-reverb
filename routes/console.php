@@ -10,6 +10,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::command('app:clear-inactive-users')->everyMinute();
+Schedule::command('queue:listen')->everyMinute();
 
 // Schedule::call(function() {
 //     $stateCity = Http::get('http://42.1.112.39/api/Wrapper/Book/StateCityNew')->json();

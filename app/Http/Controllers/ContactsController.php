@@ -3,11 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChatContact;
+use App\Traits\Chat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class ContactsController extends Controller
 {
+    use Chat;
+    public function index() {
+        try {
+            $chats = $this->chats();
+
+            return Inertia::render('contacts/Index', [
+                'chats' => fn () => $chats
+            ]);
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
+    }
+
     public function saveContact(string $id)
     {
         DB::beginTransaction();
