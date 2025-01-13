@@ -9,6 +9,8 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
+Schedule::command('app:clear-inactive-users')->everyMinute();
+
 // Schedule::call(function() {
 //     $stateCity = Http::get('http://42.1.112.39/api/Wrapper/Book/StateCityNew')->json();
 //     $newKeyTo = array_column($stateCity, 'newKey');

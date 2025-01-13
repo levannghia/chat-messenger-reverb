@@ -25,5 +25,5 @@ export const deleteChat = (chat) => {
 export const customizeChat = (user, message_color) => {
     return window.axios.post(route('chats.customize_chat', user.id), {
         message_color
-    })
+    });
 }

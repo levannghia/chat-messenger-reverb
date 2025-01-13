@@ -29,23 +29,22 @@ class ClearInactiveUsers extends Command
      */
     public function handle()
     {
-        DB::transaction();
-
+        DB::beginTransaction();
         try {
             $key = 'clear-inactive-users';
             $expiresAt = now()->addSeconds(30);
 
-            if(Cache::has($key)) throw new \Exception("Cache $key already exists");
+            if (Cache::has($key)) throw new \Exception("Cache $key already exists");
             $users = User::inactive()
-            ->select('id', 'is_online')
-            ->get()
-            ->each(function($user) {
-                $user->update([
-                    'is_online' => false,
-                ]);
-            });
+                ->select('id', 'is_online')
+                ->get()
+                ->each(function ($user) {
+                    $user->update([
+                        'is_online' => false
+                    ]);
+                });
 
-            if($users->isNotEmpty()) {
+            if ($users->isNotEmpty()) {
                 Cache::put($key, true, $expiresAt);
                 event(new UserActivity($users));
             }
