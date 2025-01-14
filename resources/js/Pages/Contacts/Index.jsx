@@ -1,14 +1,14 @@
 import ContentEmpty from '@/Components/chats/ContentEmpty'
-import Sidebar from '@/Components/chats/Sidebar'
+import Sidebar from '@/Components/contacts/Sidebar'
 import { ModalProvider } from '@/Contexts/modal-context'
 import AppLayout from '@/Layouts/AppLayout'
 import SidebarMini from '@/Layouts/partials/SidebarMini'
 import { ContactProvider } from '@/store/contactStore'
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 
 function Contacts() {
   return (
-    <AppLayout title="Chats">
+    <AppLayout title="People">
       <ContactProvider>
         <ModalProvider>
           <SidebarMini />

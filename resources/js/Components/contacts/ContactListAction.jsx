@@ -1,10 +1,9 @@
 import { useModalContext } from '@/Contexts/modal-context'
 import { contactStore } from '@/store/contactStore'
 import React, { useRef } from 'react'
-import Dropdown from 'vendor/laravel/breeze/stubs/inertia-vue-ts/resources/js/Components/Dropdown.vue'
-import { useDropdownContext } from '../Dropdown'
+import Dropdown, { useDropdownContext } from '../Dropdown'
 import clsx from 'clsx'
-import { BsThreeDots } from 'react-icons/bs'
+import { BsBan, BsThreeDots, BsXLg } from 'react-icons/bs'
 import { unblockContact } from '@/Api/contact'
 
 export default function ContactListAction({ contact }) {

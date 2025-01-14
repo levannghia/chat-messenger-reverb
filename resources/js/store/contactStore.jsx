@@ -21,7 +21,7 @@ export const contactStore = create((set) => ({
     setPaginate: (value) => set({ paginate: value }),
 }))
 
-export const ContactProvider = ({ Children }) => {
+export const ContactProvider = ({ children }) => {
     const props = usePage().props;
     const [isFirstLoading, setIsFirstLoading] = useState(true);
     const { contacts, setContacts, paginate, setPaginate } = contactStore();
@@ -31,16 +31,38 @@ export const ContactProvider = ({ Children }) => {
         setContacts(props.contacts.data)
         setPaginate(props.contacts)
 
-        window.Echo.channel('user-activity')
-            .listen('user-activity', (data) => {
+        try {
+            window.Echo.channel(`user-activity`).listen('.user-activity', (data) => {
+                console.log(data);
                 const listContacts = contacts.length > 0 ? contacts : props.contacts.data;
-
-                if(Array.isArray(listContacts)) {
+    
+                if (Array.isArray(listContacts)) {
                     const users = data.user;
-                    
+                    setContacts(
+                        listContacts.map((contact) => {
+                            const user = users.find((user) => user.id === contact.id);
+                            if (user) contact.is_online = user.is_online;
+    
+                            return contact;
+                        })
+                    )
+                } else {
+                    const user = data.user;
+                    setContacts(
+                        listContacts.map((contact) => {
+                            if (contact.id === user.id) {
+                                contact.is_online = user.is_online;
+                            }
+    
+                            return contact;
+                        }),
+                    );
                 }
             })
+        } catch (error) {
+            console.log(error);
+        }
     }, [])
 
-    return <>{Children}</>
+    return <>{children}</>
 }

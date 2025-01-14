@@ -14,6 +14,6 @@ export const fetchContactsInPaginate = (url) => {
     return window.axios.get(url);
 }
 
-export const fetchContacts = () => {
+export const fetchContacts = (query = '') => {
     return window.axios.get(`${route("contacts.data")}?query=${query || ""}`);
 }

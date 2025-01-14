@@ -2,6 +2,7 @@ import { contactStore } from '@/store/contactStore';
 import React, { useState } from 'react'
 import ContactListSearch from './ContactListSearch';
 import ContactList from './ContactList';
+import clsx from 'clsx';
 
 export default function Sidebar() {
     const { contacts } = contactStore();

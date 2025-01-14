@@ -1,10 +1,12 @@
 import { fetchContactsInPaginate } from '@/Api/contact';
 import { contactStore } from '@/store/contactStore'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer';
 import BadgeOnline from '../chats/BadgeOnline';
 import ContactListAction from './ContactListAction';
 import { BsArrowClockwise } from 'react-icons/bs';
+import { Link } from '@inertiajs/react';
+import clsx from 'clsx';
 
 export default function ContactList() {
     const { contacts, setContacts, paginate, setPaginate } = contactStore();

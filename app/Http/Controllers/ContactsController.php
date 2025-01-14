@@ -18,10 +18,10 @@ class ContactsController extends Controller
         try {
             $contacts = $this->contacts();
 
-            return Inertia::render('contacts/Index', [
+            return Inertia::render('Contacts/Index', [
                 'contacts' => $contacts
             ]);
-            
+
         } catch (\Exception $e) {
             return back()->with([
                 'error_msg' => $e->getMessage()

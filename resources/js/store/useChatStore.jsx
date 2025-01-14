@@ -46,7 +46,6 @@ export const ChatProvider = ({ children }) => {
         setPaginate(props.chats);
 
         window.Echo.channel(`user-activity`).listen('.user-activity', (data) => {
-            console.log(data);
             if (Array.isArray(data.user)) {
                 refetchChats();
             } else {
