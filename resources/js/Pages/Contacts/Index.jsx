@@ -3,19 +3,19 @@ import Sidebar from '@/Components/chats/Sidebar'
 import { ModalProvider } from '@/Contexts/modal-context'
 import AppLayout from '@/Layouts/AppLayout'
 import SidebarMini from '@/Layouts/partials/SidebarMini'
-import { ChatProvider } from '@/store/useChatStore'
+import { ContactProvider } from '@/store/contactStore'
 import React, { useEffect, useRef } from 'react'
 
 function Contacts() {
   return (
     <AppLayout title="Chats">
-      <ChatProvider>
+      <ContactProvider>
         <ModalProvider>
           <SidebarMini />
           <Sidebar />
           <ContentEmpty />
         </ModalProvider>
-      </ChatProvider>
+      </ContactProvider>
     </AppLayout>
   )
 }

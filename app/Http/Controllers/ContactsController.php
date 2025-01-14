@@ -4,22 +4,37 @@ namespace App\Http\Controllers;
 
 use App\Models\ChatContact;
 use App\Traits\Chat;
+use App\Traits\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ContactsController extends Controller
 {
-    use Chat;
-    public function index() {
+    use Contact;
+
+    public function index()
+    {
         try {
-            $chats = $this->chats();
+            $contacts = $this->contacts();
 
             return Inertia::render('contacts/Index', [
-                'chats' => fn () => $chats
+                'contacts' => $contacts
             ]);
+            
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            return back()->with([
+                'error_msg' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function loadData()
+    {
+        try {
+            return $this->ok($this->contacts());
+        } catch (\Exception $e) {
+            return $this->oops($e->getMessage());
         }
     }
 
@@ -115,7 +130,7 @@ class ContactsController extends Controller
             return $this->ok(code: 204);
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return $this->oops($e->getMessage());
         }
     }
