@@ -60,9 +60,18 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        $user->update([
+            'name' => 'Deleted Account',
+            'email' => $user->id,
+            'avatar' => '/images/ghost.png',
+            'active_status' => false,
+            'is_online' => false,
+            'last_seen' => '1970-01-01'
+        ]);
+
         Auth::logout();
 
-        $user->delete();
+        // $user->delete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

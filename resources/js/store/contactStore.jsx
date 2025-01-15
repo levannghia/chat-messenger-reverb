@@ -36,7 +36,7 @@ export const ContactProvider = ({ children }) => {
                 console.log(data);
                 const listContacts = contacts.length > 0 ? contacts : props.contacts.data;
     
-                if (Array.isArray(listContacts)) {
+                if (Array.isArray(data.user)) {
                     const users = data.user;
                     setContacts(
                         listContacts.map((contact) => {

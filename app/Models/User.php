@@ -56,15 +56,22 @@ class User extends Authenticatable
     protected function isOnline(): Attribute
     {
         return Attribute::make(
-            get: fn ($value, $attributes) => (bool) $value && (bool) $attributes['active_status'],
+            get: fn ($value, $attributes) => (bool) $value, // && (bool) $attributes['active_status'],
             set: fn ($value) => (int) $value
         );
     }
 
     protected function activeStatus(): Attribute {
         return Attribute::make(
-            get: fn ($value, $attribute) => (bool) $value,
+            get: fn ($value) => (bool) $value,
             set: fN ($value) => (int) $value 
+        );
+    }
+
+    protected function isContactBlocked(): Attribute {
+        return Attribute::make(
+            get: fn ($value) => (bool) $value,
+            set: fn ($value) => (int) $value
         );
     }
 

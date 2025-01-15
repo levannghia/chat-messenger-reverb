@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArchivedChatsController;
 use App\Http\Controllers\ChatsController;
 use App\Http\Controllers\CheckTotalCompany;
 use App\Http\Controllers\ContactsController;
@@ -17,12 +18,17 @@ Route::get('/total-company', [CheckTotalCompany::class, 'index']);
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::patch('/users/{id}', [UserController::class, 'update'])->name('users.update');
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+Route::middleware('auth')->group(function () {  
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::patch('/{id}', [UserController::class, 'update'])->name('update');
+    });
 
     Route::prefix('chats')->name('chats.')->group(function () {
         Route::get('/', [ChatsController::class, 'index'])->name('index');
@@ -58,7 +64,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [GroupController::class, 'exit'])->name('exit');
     });
 
-    Route::get('/archived-chats', [ChatsController::class, 'index'])->name('archived_chats.index');
+    Route::prefix('archived-chats')->name('archived_chats.')->group(function () {
+        Route::get('/', [ArchivedChatsController::class, 'index'])->name('index');
+        Route::get('/{id}', [ArchivedChatsController::class, 'show'])->name('show');
+    });
+    
 });
 
 require __DIR__ . '/auth.php';

@@ -24,6 +24,12 @@ class UserActivity implements ShouldBroadcastNow
         //
     }
 
+    public function broadcastWith() {
+        return [
+            'user' => $this->user,
+        ];
+    }
+
     /**
      * Get the channels the event should broadcast on.
      *
