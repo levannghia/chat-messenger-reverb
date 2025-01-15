@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('avatar')->nullable();
-            $table->boolean('active_status')->nullable();
+            $table->boolean('active_status')->default(1);
             $table->boolean('is_online')->nullable();
             $table->dateTime('last_seen')->default(now());
             $table->rememberToken();
