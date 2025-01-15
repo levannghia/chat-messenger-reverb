@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { BsArchive, BsBan, BsBoxArrowRight, BsCheck2, BsThreeDots, BsXLg } from 'react-icons/bs';
 import { useAppStore } from '@/store/appStore';
 import { useChatStore } from '@/store/useChatStore';
-import { archiveChat, maskAsRead, maskAsUnread } from '@/Api/chats';
+import { archiveChat, maskAsRead, maskAsUnread, unarchiveChat } from '@/Api/chats';
 import { useModalContext } from '@/Contexts/modal-context';
 import { unblockContact } from '@/Api/contact';
 import { useChatMessageStore } from '@/store/chatMessageStore';
@@ -98,6 +98,13 @@ const Action = ({ chat }) => {
         });
     };
 
+    const handleUnarchiveChat = () => {
+        unarchiveChat(chat).then(() => {
+            refetchChats();
+            // syncNotification();
+        });
+    };
+
     return (
         <div ref={dropdownRef}>
             <Dropdown.Trigger>
@@ -124,12 +131,22 @@ const Action = ({ chat }) => {
                     </Dropdown.Button>
                 )}
 
-                <Dropdown.Button onClick={handleArchiveChat}>
-                    <div className='flex items-center gap-2'>
-                        <BsArchive className='-ml-1 text-lg' />
-                        Archive Chat
-                    </div>
-                </Dropdown.Button>
+                {route().current("chats.*") ? (
+                    <Dropdown.Button onClick={handleArchiveChat}>
+                        <div className="flex items-center gap-2">
+                            <BsArchive />
+                            Archive Chat
+                        </div>
+                    </Dropdown.Button>
+                ) : (
+                    <Dropdown.Button onClick={handleUnarchiveChat}>
+                        <div className="flex items-center gap-2">
+                            <BsArchive />
+                            Unarchive Chat
+                        </div>
+                    </Dropdown.Button>
+                )}
+
                 <Dropdown.Button onClick={deleteChatConfirmation}>
                     <div className='flex items-center gap-2'>
                         <BsXLg className='-ml-1 text-lg' />

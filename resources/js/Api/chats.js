@@ -2,6 +2,10 @@ export const fetchChats = (query) => {
     return window.axios.get(`${route("chats.users")}?query=${query || ""}`);
 }
 
+export const fetchArchivedChats = () => {
+    return window.axios.get(`${route("chats.users")}?archived_chats=true`);
+}
+
 export const fetchChatsInPaginate = (url) => {
     return window.axios.get(url);
 }
@@ -16,6 +20,10 @@ export const maskAsUnread = (chat) => {
 
 export const archiveChat = (chat) => {
     return window.axios.post(route("chats.archive", chat.id))
+}
+
+export const unarchiveChat = (chat) => {
+    return window.axios.post(route("chats.unarchive", chat.id));
 }
 
 export const deleteChat = (chat) => {

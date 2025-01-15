@@ -73,6 +73,7 @@ export const ChatMessageProvider = ({ children }) => {
     const props = usePage().props;
     const [isFirstLoading, setIsFirstLoading] = useState(true);
     const {
+        user,
         setUser,
         setMessages,
         setPaginate,
@@ -111,6 +112,14 @@ export const ChatMessageProvider = ({ children }) => {
 
         // Check if Laravel Echo is properly configured and working
         if (window.Echo) {
+            window.Echo.channel(`user-activity`).listen(
+                ".user-activity",
+                (data) => {
+                    const tmpUser = user.id ? user : props.user;
+                    tmpUser.id === data.user.id && setUser({ ...user, is_online: data.user.is_online });
+                },
+            );
+
             window.Echo.channel(`send-message-${props.user.id}-to-${props.auth.id}`)
                 .listen('.send-message', syncAll)
                 .error((error) => {

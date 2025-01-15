@@ -1,4 +1,4 @@
-import { fetchChats } from "@/Api/chats";
+import { fetchArchivedChats, fetchChats } from "@/Api/chats";
 import { existingFiles, existingLinks, existingMedia } from "@/utils";
 import { usePage } from "@inertiajs/react";
 import moment from "moment";
@@ -31,6 +31,12 @@ export const useChatStore = create((set) => ({
 
         if (route().current("chats.*")) {
             return fetchChats().then((response) => set({ chats: response.data.data.data }));
+        }
+
+        if (route().current("archived_chats.*")) {
+            return fetchArchivedChats().then((response) =>
+                set({ chats: response.data.data.data })
+            );
         }
     }
 }))
