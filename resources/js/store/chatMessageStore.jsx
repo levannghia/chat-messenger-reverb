@@ -45,6 +45,8 @@ export const useChatMessageStore = create((set, get) => ({
     links: [],
     files: [],
     selectedMedia: undefined,
+    isTyping: false,
+    setIsTyping: (value) => set({isTyping: value}),
     setUser: (value) => set({ user: value }),
     setMessages: (value) => set({ messages: value }),
     setPaginate: (value) => set({ paginate: value }),

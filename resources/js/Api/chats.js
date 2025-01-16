@@ -35,3 +35,7 @@ export const customizeChat = (user, message_color) => {
         message_color
     });
 }
+
+export const fetchNotification = () => {
+    return window.axios.get(route("chats.notification"));
+}

@@ -1,6 +1,8 @@
 import Alert from '@/Components/Alert';
 import { useAppStore } from '@/store/appStore'
+import { replaceBadgeNotificationCount } from '@/utils';
 import { Head, usePage } from '@inertiajs/react'
+import clsx from 'clsx';
 import React, { useEffect, useRef, useState } from 'react'
 
 function AppLayout({ title, children }) {
@@ -22,17 +24,17 @@ function AppLayout({ title, children }) {
     // Initialize state on component mount
     useEffect(() => {
         setAuth(props.auth);
-        //   setNotificationCount(props.notification_count);
-        //   setIsFirstLoading(false);
+          setNotificationCount(props.notification_count);
+          setIsFirstLoading(false);
 
         if (props.error_msg) setErrorMsg(props.error_msg);
         if (props.success_msg) setSuccessMsg(props.success_msg);
 
-        //   window.Echo.channel(`send-message-${props.auth.id}`).listen(".send-message", () => {
-        //     syncNotification().then(() => {
-        //       notificationRef.current?.play();
-        //     });
-        //   });
+          window.Echo.channel(`send-message-${props.auth.id}`).listen(".send-message", () => {
+            syncNotification().then(() => {
+              notificationRef.current?.play();
+            });
+          });
     }, []);
 
     // Set timeout for error and success messages
@@ -42,13 +44,13 @@ function AppLayout({ title, children }) {
     }, [errorMsg, successMsg]);
 
     // Update badge notification count
-    // useEffect(() => {
-    //   if (!isFirstLoading) replaceBadgeNotificationCount(notificationCount);
-    // }, [notificationCount]);
+    useEffect(() => {
+      if (!isFirstLoading) replaceBadgeNotificationCount(notificationCount);
+    }, [notificationCount]);
 
     return (
         <>
-            <Head title={title} />
+            <Head title={clsx(props.notification_count > 0 && `(${props.notification_count})`, title)} />
             <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground sm:flex-row">
                 {children}
             </div>

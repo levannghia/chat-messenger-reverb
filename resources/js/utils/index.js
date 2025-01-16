@@ -29,7 +29,7 @@ export const relativeTime = (time) => {
 };
 
 export const isImageLinkValid = (name = '') => {
-  if(!name) return
+  if (!name) return
   const validExtensions = ["jpg", "jpeg", "png", "gif", "svg", "bmp", "webp"];
   const extension = name.split('.').pop()?.toLocaleLowerCase() ?? "";
 
@@ -58,4 +58,22 @@ export const existingFiles = (attachment) => {
 
 export const existingLinks = (links = []) => {
   return links && links.length > 0;
+}
+
+export const replaceBadgeNotificationCount = (notification) => {
+  const title = document.title;
+  const pattern = /\(\d+\)/;
+
+  if (pattern.test((title))) {
+    let newTitle = title.replace(pattern, `(${notification})`);
+
+    if (notification === 0) {
+      newTitle = newTitle.replace("(0) ", "")
+    }
+
+    document.title = newTitle;
+  } else if (notification > 0) {
+    const newTitle = `(${notification}) ${title}`;
+    document.title = newTitle;
+  }
 }

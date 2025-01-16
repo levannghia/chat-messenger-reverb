@@ -17,9 +17,8 @@ export default function ChatFooter({
   onSelectOrPreviewFiles,
 }) {
   const { theme, auth } = useAppStore();
-  const { refetchChats } = useChatStore();
   const { user, setMessages, messages, setUser, reloadMedia, reloadFiles, reloadLinks } = useChatMessageStore();
-  const { setChats, chats } = useChatStore();
+  const { setChats, chats, refetchChats } = useChatStore();
   const [message, setMessage] = useState("");
   const [isOpenEmoji, setIsOpenEmoji] = useState(false);
   const [textareaHeight, setTextareaHeight] = useState(48);
@@ -30,6 +29,29 @@ export default function ChatFooter({
   useEffect(() => {
     textareaRef.current?.focus();
   }, [])
+
+  useEffect(() => {
+    const channel = window.Echo.private(`user-typing-${auth.id}-to-${user.id}`);
+
+    if(message.length > 0 && !isTyping) {
+      channel.whisper(".typing", {
+        from: auth,
+        to: user,
+        oldMessage: chats.find((c) => c.id === user.id),
+      })
+
+      setIsTyping(true)
+    }
+  }, [message])
+
+  useEffect(() => {
+    if (isTyping) {
+      setTimeout(() => {
+        setIsTyping(false);
+        setTimeout(scrollToBottom, 300);
+      }, 10000);
+    }
+  }, [isTyping]);
 
   const handleOnChange = (e) => {
     setMessage(e.target.value);

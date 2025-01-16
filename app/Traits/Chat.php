@@ -36,7 +36,7 @@ trait Chat
                 ->groupBy('contact_id', 'is_contact_blocked');
 
             $chats = User::leftJoinSub($chatGroup, 'cg', function (JoinClause $join) {
-                $join->on('cg.member_id', 'users.id')  ;
+                $join->on('cg.member_id', 'users.id');
             })
                 ->leftJoinSub($contacts, 'c', function (JoinClause $join) {
                     $join->on('c.contact_id', 'users.id');
@@ -279,5 +279,39 @@ trait Chat
             ->groupBy('another_user_id');
 
         return $latestMessage;
+    }
+
+    public function notificationCount()
+    {
+        if (!auth()->check()) return 0;
+
+        $group = GroupMember::where('member_id', auth()->id())
+            ->select('member_id', 'group_id')
+            ->groupBy('member_id', 'group_id');
+
+        $latestMessage = $this->latestMessageForEachChat($group);
+        $chats = ChatMessage::with('another_user', 'to', 'from', 'attachments')
+            ->joinSub($latestMessage, 'lm', function (JoinClause $join) {
+                $join->on('chat_messages.sort_id', 'lm.sort_id')
+                    ->on(function (JoinClause $join) {
+                        $join->on('chat_messages.from_id', 'lm.another_user_id')
+                            ->orOn('chat_messages.to_id', 'lm.another_user_id');
+                    });
+            })
+            ->leftJoin('archived_chats as ac', function (JoinClause $join) {
+                $join->on('ac.from_id', 'lm.another_user_id')
+                    ->where('ac.archived_by', auth()->id());
+            })
+            ->where(function (Builder $query) use ($group) {
+                $query->where('chat_messages.from_id', auth()->id())
+                    ->orWhere('chat_messages.to_id', auth()->id())
+                    ->orWhereIn('to_id', $group->pluck('group_id')->toArray());
+            })
+            ->notSeen()
+            ->whereNull('ac.id')
+            ->select('1')
+            ->count();
+
+        return $chats;
     }
 }

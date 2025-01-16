@@ -429,4 +429,13 @@ class ChatsController extends Controller
             return $this->oops($e->getMessage());
         }
     }
+
+    public function loadNotification() {
+        try {
+            $notificationCount = $this->notificationCount();
+            return $this->ok(['notification_count' => $notificationCount]);
+        } catch (\Exception $e) {
+            return $this->oops($e->getMessage());
+        }
+    }
 }

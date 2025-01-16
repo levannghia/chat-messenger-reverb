@@ -15,7 +15,7 @@ export default function ChatBody({
   onDrop,
 }) {
   const { auth } = useAppStore();
-  const { user, messages, setMessages, paginate, setPaginate } = useChatMessageStore();
+  const { user, messages, setMessages, paginate, setPaginate, isTyping } = useChatMessageStore();
   const { ref: loadMoreRef, inView } = useInView();
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function ChatBody({
                 if (chatContainerRef.current) {
                   const { scrollHeight } = chatContainerRef.current;
                   const newScrollHeight = scrollHeight - prevScrollHeight;
-                  
+
                   chatContainerRef.current.scrollTop =
                     newScrollHeight + prevScrollTop;
                 }
@@ -85,6 +85,17 @@ export default function ChatBody({
         </button>
       )}
       <ChatMessages />
+      {user.chat_type === 'chats' &&
+        user.id !== auth.id &&
+        isTyping && (
+          <div className="my-[3px] flex flex-row justify-start">
+            <div className="typing relative flex gap-1 rounded-3xl bg-secondary px-4 py-3">
+              <div className="animate-typing h-2 w-2 rounded-full bg-secondary-foreground/50" />
+              <div className="animate-typing h-2 w-2 rounded-full bg-secondary-foreground/50" />
+              <div className="animate-typing h-2 w-2 rounded-full bg-secondary-foreground/50" />
+            </div>
+          </div>
+        )}
       <div ref={bottomRef} className='h-0' />
       <SaveOrBlockContent />
     </div>

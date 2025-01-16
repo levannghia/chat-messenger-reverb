@@ -1,27 +1,44 @@
+import { fetchNotification } from "@/Api/chats";
 import Alert from "@/Components/Alert";
+import moment from "moment";
 import { useState } from "react";
 import { create } from "zustand"
 
 export const useAppStore = create((set) => ({
-    auth: {
-        id: "",
-        name: "",
-        email: "",
-        email_verified_at: "",
-        avatar: "",
-        active_status: false,
-        is_online: false,
-        last_seen: "",
-        is_contact_blocked: false,
-        is_contact_saved: false,
-    },
-    errorMsg: null,
-    successMsg: null,
-    notificationCount: 0,
-    setAuth: (value) => set({auth: value}),
-    setErrorMsg: (value) => set({errorMsg: value}),
-    setNotificationCount: (value) => set({notificationCount: value}),
-    syncNotification: () => set({}),
+  auth: {
+    id: "",
+    name: "",
+    email: "",
+    email_verified_at: "",
+    avatar: "",
+    active_status: false,
+    is_online: false,
+    last_seen: "",
+    is_contact_blocked: false,
+    is_contact_saved: false,
+  },
+  errorMsg: null,
+  successMsg: null,
+  notificationCount: 0,
+  setAuth: (value) => set({ auth: value }),
+  setErrorMsg: (value) => set({ errorMsg: value }),
+  setNotificationCount: (value) => set({ notificationCount: value }),
+  syncNotification: async () => {
+    const lastSync = localStorage.getItem("last-sync-notification");
+    const currentTime = moment();
+
+    if (lastSync && currentTime.diff(moment(parseInt(lastSync))) < 3000) return;
+
+    localStorage.setItem(
+      "last-sync-notification",
+      currentTime.valueOf().toString(),
+    );
+
+    return await fetchNotification().then((response) => {
+      console.log(response);
+      set({ notificationCount: response.data.data.notification_count })
+    });
+  },
 }))
 
 // Component to provide state and handle side effects

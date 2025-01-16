@@ -6,6 +6,7 @@ use App\Http\Controllers\CheckTotalCompany;
 use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PreferencesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -34,6 +35,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ChatsController::class, 'index'])->name('index');
         Route::get('/users', [ChatsController::class, 'loadChats'])->name('users');
         Route::get('/{id}', [ChatsController::class, 'show'])->name('show');
+        Route::get('/notification', [ChatsController::class, 'loadNotification'])->name('notification');
         Route::get('/{id}/messages', [ChatsController::class, 'loadMessages'])->name('messages');
         Route::post('/', [ChatsController::class, 'store'])->name('store');
         Route::delete('/{id}', [ChatsController::class, 'destroy'])->name('destroy');
@@ -68,6 +70,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ArchivedChatsController::class, 'index'])->name('index');
         Route::get('/{id}', [ArchivedChatsController::class, 'show'])->name('show');
     });
+
+    Route::get('/preferences', [PreferencesController::class, 'index'])->name('preferences.index');
     
 });
 
