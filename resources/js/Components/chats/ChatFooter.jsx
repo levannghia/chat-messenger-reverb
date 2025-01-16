@@ -31,16 +31,18 @@ export default function ChatFooter({
   }, [])
 
   useEffect(() => {
-    const channel = window.Echo.private(`user-typing-${auth.id}-to-${user.id}`);
+    if (user.id) {
+      const channel = window.Echo.private(`user-typing-${auth.id}-to-${user.id}`);
 
-    if(message.length > 0 && !isTyping) {
-      channel.whisper(".typing", {
-        from: auth,
-        to: user,
-        oldMessage: chats.find((c) => c.id === user.id),
-      })
+      if (message.length > 0 && !isTyping) {
+        channel.whisper(".typing", {
+          from: auth,
+          to: user,
+          oldMessage: chats.find((c) => c.id === user.id),
+        })
 
-      setIsTyping(true)
+        setIsTyping(true)
+      }
     }
   }, [message])
 
