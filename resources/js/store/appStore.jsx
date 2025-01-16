@@ -34,10 +34,13 @@ export const useAppStore = create((set) => ({
       currentTime.valueOf().toString(),
     );
 
-    return await fetchNotification().then((response) => {
-      console.log(response);
-      set({ notificationCount: response.data.data.notification_count })
-    });
+    try {
+      const response = await fetchNotification();
+      console.log(response.data);
+      set({ notificationCount: response.data.data.notification_count });
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
   },
 }))
 

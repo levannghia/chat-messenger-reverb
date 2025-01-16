@@ -34,11 +34,11 @@ Route::middleware('auth')->group(function () {
     Route::prefix('chats')->name('chats.')->group(function () {
         Route::get('/', [ChatsController::class, 'index'])->name('index');
         Route::get('/users', [ChatsController::class, 'loadChats'])->name('users');
-        Route::get('/{id}', [ChatsController::class, 'show'])->name('show');
         Route::get('/notification', [ChatsController::class, 'loadNotification'])->name('notification');
         Route::get('/{id}/messages', [ChatsController::class, 'loadMessages'])->name('messages');
         Route::post('/', [ChatsController::class, 'store'])->name('store');
         Route::delete('/{id}', [ChatsController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}', [ChatsController::class, 'show'])->name('show');
         Route::delete('/{id}/file/{file_name}', [ChatsController::class, 'deleteSelectedFile'])->name('delete_file');
         Route::delete('/{id}/delete', [ChatsController::class, 'destroyAll'])->name('destroy_all');
         Route::post('/{id}/read', [ChatsController::class, 'markAsRead'])->name('mark_as_read');
@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}/media', [ChatsController::class, 'loadMedia'])->name('media');
         Route::get('/{id}/files', [ChatsController::class, 'loadFiles'])->name('files');
         Route::get('/{id}/links', [ChatsController::class, 'loadLinks'])->name('links');
+
     });
 
     Route::prefix('contacts')->name('contacts.')->group(function () {

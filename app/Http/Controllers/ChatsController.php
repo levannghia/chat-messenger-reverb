@@ -25,7 +25,7 @@ class ChatsController extends Controller
     {
         try {
             return Inertia::render('Chats/Index', [
-                'chats' => fn () => $this->chats(),
+                'chats' => fn() => $this->chats(),
             ]);
         } catch (\Exception $e) {
             return $this->oops($e->getMessage());
@@ -57,12 +57,12 @@ class ChatsController extends Controller
         try {
             $user = User::find($id);
             $group = ChatGroup::find($id);
-            
+
             if (!$user && !$group) {
                 throw new \Exception('User or group not found');
             }
 
-            if($user) {
+            if ($user) {
                 $user->is_contact_saved = auth()->user()->is_contact_saved($id);
                 $user->is_contact_blocked = auth()->user()->is_contact_blocked($id);
                 $user->chat_type = ChatMessage::CHAT_TYPE;
@@ -78,12 +78,12 @@ class ChatsController extends Controller
             // dd($this->chats());
 
             return Inertia::render('Chats/Show', [
-                'chats' => fn () => $this->chats(),
-                'user' => fn () => $user,
-                'messages' => fn () => $this->messages($id),
-                'media' => fn () => $this->media($id),
-                'files' => fn () => $this->files($id),
-                'links' => fn () => $this->links($id),
+                'chats' => fn() => $this->chats(),
+                'user' => fn() => $user,
+                'messages' => fn() => $this->messages($id),
+                'media' => fn() => $this->media($id),
+                'files' => fn() => $this->files($id),
+                'links' => fn() => $this->links($id),
             ]);
 
         } catch (\Exception $e) {
@@ -144,14 +144,16 @@ class ChatsController extends Controller
             $chat->attachments = $chat->attachments;
             $chat->links = $links;
             $from = auth()->user();
-            if($chat->to instanceof User) {
+            if ($chat->to instanceof User) {
                 $to = User::find($request->to_id);
-                if(!$blockedUser || !$blockedUser->is_contact_blocked) {
+                if (!$blockedUser || !$blockedUser->is_contact_blocked) {
                     event(new SendMessage($from, $to, $chat));
                 }
             } else {
                 //TODO: send notification on group
-                $memberIds = $chat->to->group_members->pluck('member_id')->toArray();
+                $memberIds = $chat->to->group_members()
+                    ->whereNot('member_id', auth()->id())
+                    ->pluck('member_id')->toArray();
                 $toMembers = User::whereIn('id', $memberIds)->get();
 
                 foreach ($toMembers as $to) {
@@ -337,32 +339,33 @@ class ChatsController extends Controller
         }
     }
 
-    public function destroyAll (string $id) {
+    public function destroyAll(string $id)
+    {
         DB::beginTransaction();
         try {
             ChatMessage::forUserOrGroup($id)->get()
-            ->each(function($chat) {
-                $deleteInId = collect(json_decode($chat->deleted_in_id) ?? []);
+                ->each(function ($chat) {
+                    $deleteInId = collect(json_decode($chat->deleted_in_id) ?? []);
 
-                if($chat->to instanceof User && $deleteInId->count() > 0) {
-                    $chat->delete();
-                    foreach ($chat->attachments as $attachment) {
-                        $filePath  = $attachment->file_path . DIRECTORY_SEPARATOR . $attachment->file_name;
-                        remove_file($filePath);
-                    }
-                } else {
-                    $chat->update([
-                        'deleted_in_id' => json_encode($deleteInId->push(['id' => auth()->id()])->toArray())
-                    ]);
-
-                    foreach ($chat->attachments as $attachment) {
-                        $deletedAttachmentInId = collect(json_decode($attachment->delete_in_id) ?? []);
-                        $attachment->update([
-                            'deleted_in_id' => json_encode($deletedAttachmentInId->push(['id' => auth()->id()])->toArray())
+                    if ($chat->to instanceof User && $deleteInId->count() > 0) {
+                        $chat->delete();
+                        foreach ($chat->attachments as $attachment) {
+                            $filePath = $attachment->file_path . DIRECTORY_SEPARATOR . $attachment->file_name;
+                            remove_file($filePath);
+                        }
+                    } else {
+                        $chat->update([
+                            'deleted_in_id' => json_encode($deleteInId->push(['id' => auth()->id()])->toArray())
                         ]);
+
+                        foreach ($chat->attachments as $attachment) {
+                            $deletedAttachmentInId = collect(json_decode($attachment->delete_in_id) ?? []);
+                            $attachment->update([
+                                'deleted_in_id' => json_encode($deletedAttachmentInId->push(['id' => auth()->id()])->toArray())
+                            ]);
+                        }
                     }
-                }
-            });
+                });
 
             DB::commit();
             return $this->ok(code: 204);
@@ -372,13 +375,14 @@ class ChatsController extends Controller
         }
     }
 
-    public function customizeChat(string $id, Request $request) {
+    public function customizeChat(string $id, Request $request)
+    {
         DB::beginTransaction(); //sâsas
 
         try {
             $chat = ChatMessageColor::where('from_id', auth()->id())->where('to_id', $id)->first();
 
-            if(!$chat) {
+            if (!$chat) {
                 ChatMessageColor::create([
                     'from_id' => auth()->id(),
                     'to_id' => $id,
@@ -397,7 +401,7 @@ class ChatsController extends Controller
         }
     }
 
-    public function loadMedia(string $id) 
+    public function loadMedia(string $id)
     {
         try {
             $media = $this->media($id);
@@ -408,7 +412,7 @@ class ChatsController extends Controller
         }
     }
 
-    public function loadFiles(string $id) 
+    public function loadFiles(string $id)
     {
         try {
             $files = $this->files($id);
@@ -419,7 +423,7 @@ class ChatsController extends Controller
         }
     }
 
-    public function loadLinks(string $id) 
+    public function loadLinks(string $id)
     {
         try {
             $links = $this->links($id);
@@ -430,7 +434,8 @@ class ChatsController extends Controller
         }
     }
 
-    public function loadNotification() {
+    public function loadNotification()
+    {
         try {
             $notificationCount = $this->notificationCount();
             return $this->ok(['notification_count' => $notificationCount]);

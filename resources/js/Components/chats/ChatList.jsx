@@ -10,25 +10,30 @@ import { fetchChatsInPaginate, maskAsRead } from '@/Api/chats';
 import ChatListAction from './ChatListAction';
 import { useInView } from "react-intersection-observer";
 import { BsArrowClockwise } from 'react-icons/bs';
+import { useAppStore } from '@/store/appStore';
 
 export default function ChatList({ search, href, className }) {
     const { chats, setChats, setPaginate, paginate } = useChatStore();
-    const { ref:loadMoreRef, inView, entry } = useInView();
+    const { ref: loadMoreRef, inView, entry } = useInView();
+    const { syncNotification } = useAppStore();
 
     const handleMarkAsRead = (chat) => {
-        !chat.is_read && maskAsRead(chat)
+        if (!chat.is_read) {
+            maskAsRead(chat).then(syncNotification);
+        }
+
     }
 
     useEffect(() => {
-        if(inView && loadMoreRef.length > 0) {
-            if(paginate.next_page_url){
+        if (inView && loadMoreRef.length > 0) {
+            if (paginate.next_page_url) {
                 fetchChatsInPaginate(paginate.next_page_url).then((response) => {
                     setPaginate(response.data.data);
                     setChats([...chats, ...response.data.data.data]);
                 })
             }
         }
-        
+
     }, [inView, paginate])
 
     if (chats.length === 0) return;
@@ -99,11 +104,11 @@ export default function ChatList({ search, href, className }) {
                         {!chat.is_read && <BadgeNotification />}
                     </div>
                 ))}
-                {paginate.next_page_url && (
-                    <button className='mx-auto mt-4 flex' ref={loadMoreRef}>
-                        <BsArrowClockwise className='animate-spin text-2xl text-secondary-foreground'/>
-                    </button>
-                )}
+            {paginate.next_page_url && (
+                <button className='mx-auto mt-4 flex' ref={loadMoreRef}>
+                    <BsArrowClockwise className='animate-spin text-2xl text-secondary-foreground' />
+                </button>
+            )}
         </div>
     )
 }

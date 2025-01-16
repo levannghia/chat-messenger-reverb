@@ -22,7 +22,7 @@ export default function ChatListAction({ chat }) {
 const Action = ({ chat }) => {
     const { chats, setChats, refetchChats } = useChatStore();
     const { openModal } = useModalContext();
-    const { auth } = useAppStore();
+    const { auth,  syncNotification} = useAppStore();
     const { user, setUser } = useChatMessageStore();
     const { open } = useDropdownContext();
     const dropdownRef = useRef(null);
@@ -38,6 +38,8 @@ const Action = ({ chat }) => {
                 return c;
             }))
         })
+
+        syncNotification();
     }
     const handleMarkAsUnread = () => {
         maskAsUnread(chat).then(() => {
@@ -49,11 +51,15 @@ const Action = ({ chat }) => {
                 return c;
             }))
         })
+
+        syncNotification();
     }
     const handleArchiveChat = () => {
         archiveChat(chat).then(() => {
             refetchChats();
         })
+
+        syncNotification()
     }
 
     const handleUnblockContact = () => {
@@ -72,6 +78,8 @@ const Action = ({ chat }) => {
                 setUser({ ...user, is_contact_blocked: false })
             }
         })
+
+        syncNotification();
     }
 
     const deleteChatConfirmation = () => {
