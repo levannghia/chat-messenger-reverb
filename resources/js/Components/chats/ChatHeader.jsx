@@ -29,7 +29,15 @@ export default function ChatHeader({ onDrop, closeOnPreview }) {
                 <div className='leading-4'>
                     <h5 className='font-medium'>{user.name}</h5>
                     {user.chat_type === 'chats' &&
-                        <span className='text-xs text-secondary-foreground'>{user.is_online ? 'Online' : moment(user.last_seen).format('DD/MM/YY H:mm')}</span>
+                        <span className='text-xs text-secondary-foreground'>
+                            {
+                                user.is_online
+                                    ? 'Online'
+                                    : moment(user.last_seen).isAfter("2000-01-01")
+                                        ? moment(user.last_seen).format('DD/MM/YY H:mm')
+                                        : "Last seen a long time ago"
+                            }
+                        </span>
                     }
 
                 </div>
