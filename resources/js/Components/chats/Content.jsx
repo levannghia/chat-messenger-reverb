@@ -9,7 +9,7 @@ import PreviewOnDropFile from './PreviewOnDropFile'
 import { useChatMessageStore } from '@/store/chatMessageStore'
 
 export default function Content() {
-    const { showSidebarRight, isTyping, setIsTyping, user } = useChatMessageStore();
+    const { showSidebarRight, isTyping, setIsTyping, user, messages } = useChatMessageStore();
     const { auth } = useAppStore();
     const chatContainerRef = useRef();
     const bottomRef = useRef();
@@ -23,22 +23,34 @@ export default function Content() {
     }, [])
 
     useEffect(() => {
+        const handleTyping = (data) => {
+            if (data.to.id === auth.id && data.from.id === user.id) {
+                setIsTyping(true);
+                // setTimeout(() => {
+                //     setIsTyping(false); // Reset typing status after a delay
+                // }, 10000);
+                scrollToBottom();
+            }
+        };
+
         if (user.id) {
+            console.log(user);
+            
             window.Echo
                 .private(`user-typing-${user.id}-to-${auth.id}`)
-                .listenForWhisper(".typing", (data) => {
-                    
-                    if (data.to.id === auth.id && data.from.id === user.id) {
-                        setIsTyping(true);
-                        setTimeout(scrollToBottom, 300);
-                    }
-                });
+                .listenForWhisper(".typing", handleTyping);
         }
     }, [user])
 
+    // useEffect(() => {
+    //     console.log(user);
+        
+    //     isTyping && setTimeout(() => setIsTyping(false), 10000)
+    // }, [isTyping])
+
     useEffect(() => {
-        isTyping && setTimeout(() => setIsTyping(false), 10000)
-    }, [isTyping])
+        scrollToBottom();
+    }, [messages]);
 
     const scrollToBottom = () => {
         if (chatContainerRef.current && bottomRef.current) {

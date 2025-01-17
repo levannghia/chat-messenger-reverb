@@ -5,6 +5,7 @@ import React from 'react'
 import { BsFileEarmarkText } from 'react-icons/bs';
 import DeleteMessage from './DeleteMessage';
 import DeleteSelectedFileInChat from './DeleteSelectedFileInChat';
+import { useChatMessageStore } from '@/store/chatMessageStore';
 
 export default function ChatMessageAttachment({
     message,
@@ -18,6 +19,7 @@ export default function ChatMessageAttachment({
     const downloadFile = (attachment) => {
         window.open(`${attachment.file_path}/${attachment.file_name}`);
     };
+    const { setSelectedMedia } = useChatMessageStore();
 
     return (
         message.attachments?.length > 0 && (
