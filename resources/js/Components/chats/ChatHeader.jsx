@@ -9,7 +9,6 @@ import clsx from 'clsx';
 
 export default function ChatHeader({ onDrop, closeOnPreview }) {
     const { user, toggleSidebarRight, showSidebarRight } = useChatMessageStore();
-
     return (
         <div className='flex h-14 items-center justify-between border-b border-secondary p-2 shadow-sm'>
             <div className="flex items-center gap-2">

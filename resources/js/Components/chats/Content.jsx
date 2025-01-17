@@ -27,16 +27,13 @@ export default function Content() {
             window.Echo
                 .private(`user-typing-${user.id}-to-${auth.id}`)
                 .listenForWhisper(".typing", (data) => {
+                    
                     if (data.to.id === auth.id && data.from.id === user.id) {
                         setIsTyping(true);
                         setTimeout(scrollToBottom, 300);
                     }
                 });
-
-                console.log("test");
-                
         }
-
     }, [user])
 
     useEffect(() => {

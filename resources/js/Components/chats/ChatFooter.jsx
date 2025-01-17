@@ -44,7 +44,7 @@ export default function ChatFooter({
         setIsTyping(true)
       }
     }
-  }, [message])
+  }, [message, user])
 
   useEffect(() => {
     if (isTyping) {
