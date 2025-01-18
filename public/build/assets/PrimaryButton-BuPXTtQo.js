@@ -1,1 +1,0 @@
-import{j as a}from"./app-BAEfUn3A.js";function s({className:r="",disabled:t,children:n,...o}){return a.jsx("button",{...o,className:`btn btn-primary ${t&&"opacity-25"} `+r,disabled:t,children:n})}export{s as P};

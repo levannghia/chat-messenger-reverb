@@ -26,9 +26,9 @@ export default function Content() {
         const handleTyping = (data) => {
             if (data.to.id === auth.id && data.from.id === user.id) {
                 setIsTyping(true);
-                // setTimeout(() => {
-                //     setIsTyping(false); // Reset typing status after a delay
-                // }, 10000);
+                setTimeout(() => {
+                    setIsTyping(false); // Reset typing status after a delay
+                }, 10000);
                 scrollToBottom();
             }
         };
