@@ -1,5 +1,5 @@
 import { ChatProvider } from "@/store/useChatStore";
-import { ChatMessageProvider } from "@/store/chatMessageStore";
+// import { ChatMessageProvider } from "@/store/chatMessageStore";
 import { ModalProvider } from "@/contexts/modal-context";
 
 import AppLayout from "@/layouts/AppLayout";
@@ -8,6 +8,7 @@ import Sidebar from "@/components/archivedChats/Sidebar";
 import Content from "@/components/chats/Content";
 import SidebarRight from "@/components/chats/SidebarRight";
 import PopupGallery from "@/components/chats/PopupGallery";
+import ChatMessageProvider from "@/Layouts/partials/ChatMessageProvider";
 
 export default function Chats() {
   return (

@@ -1,5 +1,5 @@
 import { deleteFileInChat } from '@/Api/chat-messages';
-import { useChatMessageStore } from '@/store/chatMessageStore';
+import useChatMessageStore from '@/store/chatMessageStore';
 import { existingMedia } from '@/utils';
 import React from 'react'
 import { BsX } from 'react-icons/bs';

@@ -1,4 +1,4 @@
-import { useChatMessageStore } from '@/store/chatMessageStore';
+import useChatMessageStore from '@/store/chatMessageStore';
 import clsx from 'clsx';
 import React, { useState } from 'react'
 import ProfileInfomation from './ProfileInfomation';

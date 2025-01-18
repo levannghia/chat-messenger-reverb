@@ -1,7 +1,7 @@
 import { saveMessage } from '@/Api/chat-messages';
 import { unblockContact } from '@/Api/contact';
 import { useAppStore } from '@/store/appStore';
-import { useChatMessageStore } from '@/store/chatMessageStore';
+import useChatMessageStore from '@/store/chatMessageStore';
 import { useChatStore } from '@/store/useChatStore';
 import { existingFiles, existingLinks, existingMedia } from '@/utils';
 import clsx from 'clsx'

@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import Modal from '@/Components/modals/Modal';
 import { useModalContext } from '@/Contexts/modal-context';
 import { useAppStore } from '@/store/appStore';
-import { useChatMessageStore } from '@/store/chatMessageStore';
+import useChatMessageStore from '@/store/chatMessageStore';
 import { blockContact } from '@/Api/contact';
 import { useChatStore } from '@/store/useChatStore';
 

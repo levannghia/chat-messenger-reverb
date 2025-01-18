@@ -4,7 +4,7 @@ import { usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
 
-export const useChatMessageStore = create((set, get) => ({
+const useChatMessageStore = create((set, get) => ({
     user: {
         id: "",
         name: "",
@@ -46,7 +46,7 @@ export const useChatMessageStore = create((set, get) => ({
     files: [],
     selectedMedia: undefined,
     isTyping: false,
-    setIsTyping: (value) => set({isTyping: value}),
+    setIsTyping: (value) => set({ isTyping: value }),
     setUser: (value) => set({ user: value }),
     setMessages: (value) => set({ messages: value }),
     setPaginate: (value) => set({ paginate: value }),
@@ -66,76 +66,138 @@ export const useChatMessageStore = create((set, get) => ({
     },
     toggleSidebarRight: () => {
         const currentValue = localStorage.getItem("toggle-sidebar-right") === "true";
-        localStorage.setItem('toggle-sidebar-right', String(!currentValue));
-        set({ showSidebarRight: !currentValue });
+        const newValue = !currentValue
+        localStorage.setItem("toggle-sidebar-right", String(newValue))
+        set({ showSidebarRight: newValue })
     },
-}))
+    // Helper methods
+    refetchMessages: async (user) => {
+        const response = await fetchMessage(user)
+        set({
+            paginate: response.data.data,
+            messages: response.data.data.data
+        })
+    },
 
-export const ChatMessageProvider = ({ children }) => {
-    const props = usePage().props;
-    const [isFirstLoading, setIsFirstLoading] = useState(true);
-    const {
-        user,
-        setUser,
-        setMessages,
-        setPaginate,
-        setMedia,
-        setLinks,
-        setFiles,
-        reloadMedia,
-        reloadFiles,
-        reloadLinks
-    } = useChatMessageStore();
+    syncAll: async (data, user) => {
+        const store = get()
+        await store.refetchMessages(user)
 
-    const refetchMessages = () => {
-        fetchMessage(props.user).then((response) => {
-            setPaginate(response.data.data);
-            setMessages(response.data.data.data);
+        if (existingMedia(data.chat.attachments)) {
+            await store.reloadMedia(user)
+        }
+        if (existingFiles(data.chat.attachments)) {
+            await store.reloadFiles(user)
+        }
+        if (existingLinks(data.chat.links)) {
+            await store.reloadLinks(user)
+        }
+    },
+    // Initialize store with props
+    initialize: (props) => {
+        set({
+            user: props.user,
+            messages: props.messages.data,
+            paginate: props.messages,
+            media: props.media,
+            files: props.files,
+            links: props.links
+        })
+
+        // Set up Echo listeners
+        window.Echo.channel(`user-activity`).listen(
+            ".user-activity",
+            (data) => {
+                const currentUser = get().user
+                if (currentUser.id === data.user.id) {
+                    set({
+                        user: { ...currentUser, is_online: data.user.is_online }
+                    })
+                }
+            }
+        )
+
+        window.Echo.channel(
+            `send-message-${props.user.id}-to-${props.auth.id}`
+        ).listen(".send-message", (data) => {
+            get().syncAll(data, props.user)
+        })
+
+        window.Echo.channel(
+            `send-group-message-${props.user.id}`
+        ).listen(".send-group-message", (data) => {
+            get().syncAll(data, props.user)
         })
     }
+}))
 
-    const syncAll = (data) => {
-        refetchMessages();
-        console.log("data: ", data);
+export default useChatMessageStore
 
-        existingMedia(data.chat.attachments) && reloadMedia(props.user);
-        existingFiles(data.chat.attachments) && reloadFiles(props.user);
-        existingLinks(data.chat.links) && reloadLinks(props.user);
-    }
+// export const ChatMessageProvider = ({ children }) => {
+//     const props = usePage().props;
+//     const [isFirstLoading, setIsFirstLoading] = useState(true);
+//     const {
+//         user,
+//         setUser,
+//         setMessages,
+//         setPaginate,
+//         setMedia,
+//         setLinks,
+//         setFiles,
+//         reloadMedia,
+//         reloadFiles,
+//         reloadLinks
+//     } = useChatMessageStore();
 
-    useEffect(() => {
-        setIsFirstLoading(false);
-        setUser(props.user);
-        setMessages(props.messages?.data);
-        setPaginate(props.messages);
-        setMedia(props.media);
-        setFiles(props.files);
-        setLinks(props.links);
+//     const refetchMessages = () => {
+//         fetchMessage(props.user).then((response) => {
+//             setPaginate(response.data.data);
+//             setMessages(response.data.data.data);
+//         })
+//     }
 
-        // Check if Laravel Echo is properly configured and working
-        if (window.Echo) {
-            window.Echo.channel(`user-activity`).listen(
-                ".user-activity",
-                (data) => {
-                    const tmpUser = user.id ? user : props.user;
-                    tmpUser.id === data.user.id && setUser({ ...user, is_online: data.user.is_online });
-                },
-            );
+//     const syncAll = (data) => {
+//         refetchMessages();
+//         console.log("data: ", data);
 
-            window.Echo.channel(`send-message-${props.user.id}-to-${props.auth.id}`)
-                .listen('.send-message', syncAll)
-                .error((error) => {
-                    console.error('Echo error:', error);
-                });
+//         existingMedia(data.chat.attachments) && reloadMedia(props.user);
+//         existingFiles(data.chat.attachments) && reloadFiles(props.user);
+//         existingLinks(data.chat.links) && reloadLinks(props.user);
+//     }
 
-            window.Echo.channel(`send-group-message-${props.user.id}`)
-                .listen('.send-group-message', syncAll);
+//     useEffect(() => {
+//         setIsFirstLoading(false);
+//         setUser(props.user);
+//         setMessages(props.messages?.data);
+//         setPaginate(props.messages);
+//         setMedia(props.media);
+//         setFiles(props.files);
+//         setLinks(props.links);
 
-        } else {
-            console.error("Laravel Echo is not properly configured or not working.");
-        }
-    }, []);
+//         // Check if Laravel Echo is properly configured and working
+//         if (window.Echo) {
+//             window.Echo.channel(`user-activity`).listen(
+//                 ".user-activity",
+//                 (data) => {
+//                     const tmpUser = user.id ? user : props.user;
+//                     tmpUser.id === data.user.id && setUser({ ...user, is_online: data.user.is_online });
+//                 },
+//             );
 
-    return <>{children}</>
-}
+//             window.Echo.channel(`send-message-${props.user.id}-to-${props.auth.id}`)
+//                 .listen('.send-message', syncAll)
+//                 .error((error) => {
+//                     console.error('Echo error:', error);
+//                 });
+
+//             window.Echo.channel(`send-group-message-${props.user.id}`)
+//                 .listen('.send-group-message', syncAll);
+
+//         } else {
+//             console.error("Laravel Echo is not properly configured or not working.");
+//         }
+//     }, []);
+
+//     return <>{children}</>
+// }
 

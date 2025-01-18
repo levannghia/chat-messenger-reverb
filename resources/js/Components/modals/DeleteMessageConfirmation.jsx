@@ -3,7 +3,7 @@ import Modal from "@/components/modals/Modal";
 import { useModalContext } from '@/Contexts/modal-context'
 import { useChatStore } from '@/store/useChatStore';
 import { deleteMessage } from '@/Api/chat-messages';
-import { useChatMessageStore } from '@/store/chatMessageStore';
+import useChatMessageStore from '@/store/chatMessageStore';
 import { existingFiles, existingLinks, existingMedia } from '@/utils';
 
 export default function DeleteMessageConfirmation() {

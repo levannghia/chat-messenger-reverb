@@ -1,4 +1,4 @@
-import { useChatMessageStore } from '@/store/chatMessageStore'
+import useChatMessageStore  from '@/store/chatMessageStore'
 import { formatFileSize } from '@/utils';
 import { Tab, Transition } from "@headlessui/react";
 import clsx from 'clsx';

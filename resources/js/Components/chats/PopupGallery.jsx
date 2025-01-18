@@ -1,4 +1,4 @@
-import { useChatMessageStore } from '@/store/chatMessageStore';
+import useChatMessageStore from '@/store/chatMessageStore';
 import { Dialog, Transition } from '@headlessui/react';
 import moment from 'moment';
 import React, { Fragment, useEffect, useRef, useState } from 'react'

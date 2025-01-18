@@ -1,7 +1,7 @@
 import { blockContact, saveContact } from '@/Api/contact';
 import { useModalContext } from '@/Contexts/modal-context';
 import { useAppStore } from '@/store/appStore'
-import { useChatMessageStore } from '@/store/chatMessageStore';
+import useChatMessageStore from '@/store/chatMessageStore';
 import { useChatStore } from '@/store/useChatStore';
 import React from 'react'
 import { BsBan, BsCheckCircle } from 'react-icons/bs'

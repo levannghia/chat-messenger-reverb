@@ -5,7 +5,7 @@ import React from 'react'
 import { BsFileEarmarkText } from 'react-icons/bs';
 import DeleteMessage from './DeleteMessage';
 import DeleteSelectedFileInChat from './DeleteSelectedFileInChat';
-import { useChatMessageStore } from '@/store/chatMessageStore';
+import useChatMessageStore from '@/store/chatMessageStore';
 
 export default function ChatMessageAttachment({
     message,

@@ -1,5 +1,5 @@
 import { useAppStore } from '@/store/appStore'
-import { useChatMessageStore } from '@/store/chatMessageStore';
+import useChatMessageStore from '@/store/chatMessageStore';
 import clsx from 'clsx';
 import moment from 'moment';
 import React, { Fragment, useEffect } from 'react'

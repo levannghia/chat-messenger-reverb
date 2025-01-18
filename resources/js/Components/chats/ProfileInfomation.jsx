@@ -1,5 +1,5 @@
 import { useModalContext } from '@/Contexts/modal-context';
-import { useChatMessageStore } from '@/store/chatMessageStore'
+import useChatMessageStore from '@/store/chatMessageStore';
 import { Transition } from "@headlessui/react";
 import clsx from 'clsx';
 import React from 'react'

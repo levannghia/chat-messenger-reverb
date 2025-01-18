@@ -4,7 +4,7 @@ import BadgeOnline from './BadgeOnline'
 import { Link, usePage } from '@inertiajs/react'
 import moment from 'moment';
 import { BsThreeDots, BsXLg } from 'react-icons/bs';
-import { useChatMessageStore } from '@/store/chatMessageStore';
+import useChatMessageStore from '@/store/chatMessageStore';
 import clsx from 'clsx';
 
 export default function ChatHeader({ onDrop, closeOnPreview }) {

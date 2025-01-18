@@ -6,7 +6,7 @@ import ChatFooter from './ChatFooter'
 import { useAppStore } from '@/store/appStore'
 import DragFileOverlay from './DragFileOverlay'
 import PreviewOnDropFile from './PreviewOnDropFile'
-import { useChatMessageStore } from '@/store/chatMessageStore'
+import useChatMessageStore from '@/store/chatMessageStore'
 
 export default function Content() {
     const { showSidebarRight, isTyping, setIsTyping, user, messages } = useChatMessageStore();
@@ -33,14 +33,13 @@ export default function Content() {
             }
         };
 
-        if (user.id) {
-            console.log(user);
-            
+        if (user?.id && auth?.id) {            
             window.Echo
                 .private(`user-typing-${user.id}-to-${auth.id}`)
                 .listenForWhisper(".typing", handleTyping);
         }
-    }, [user])
+        
+    }, [user, auth])
 
     // useEffect(() => {
     //     console.log(user);

@@ -1,5 +1,5 @@
 import { useModalContext } from '@/Contexts/modal-context'
-import { useChatMessageStore } from '@/store/chatMessageStore';
+import useChatMessageStore from '@/store/chatMessageStore';
 import React, { useState } from 'react'
 import Modal from "@/components/modals/Modal";
 import clsx from 'clsx';

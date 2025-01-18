@@ -7,7 +7,7 @@ import { useChatStore } from '@/store/useChatStore';
 import { archiveChat, maskAsRead, maskAsUnread, unarchiveChat } from '@/Api/chats';
 import { useModalContext } from '@/Contexts/modal-context';
 import { unblockContact } from '@/Api/contact';
-import { useChatMessageStore } from '@/store/chatMessageStore';
+import useChatMessageStore from '@/store/chatMessageStore';
 
 export default function ChatListAction({ chat }) {
     return (
