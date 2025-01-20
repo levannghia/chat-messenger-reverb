@@ -11,7 +11,7 @@ Artisan::command('inspire', function () {
 
 Schedule::command('app:clear-inactive-users')->everyMinute();
 Schedule::command('queue:listen')->everyMinute();
-Schedule::command('inertia:start-ssr')->everyMinute();
+// Schedule::command('inertia:start-ssr')->everyMinute();
 
 // Schedule::call(function() {
 //     $stateCity = Http::get('http://42.1.112.39/api/Wrapper/Book/StateCityNew')->json();
